@@ -24,9 +24,11 @@ PYBIND11_MODULE( _dsgrn, m) {
   // Parameter
   LogicParameterBinding(m);
   NetworkBinding(m);
+  MultipleThresholdNetworkBinding(m);
   OrderParameterBinding(m);
   ParameterBinding(m);
   ParameterGraphBinding(m);
+  MultipleThresholdParameterGraphBinding(m);
   ConfigurationBinding(m);
   ParameterSamplerBinding(m);
   // Phase

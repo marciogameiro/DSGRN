@@ -5,8 +5,10 @@
 #pragma once
 
 #include "Parameter/Network.h"
+#include "Parameter/MultipleThresholdNetwork.h"
 #include "Parameter/Parameter.h"
 #include "Parameter/ParameterGraph.h"
+#include "Parameter/MultipleThresholdParameterGraph.h"
 #include "Parameter/OrderParameter.h"
 #include "Parameter/LogicParameter.h"
 #include "Parameter/ParameterSampler.h"

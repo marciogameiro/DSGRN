@@ -1,4 +1,4 @@
-/// ParameterGraph.h
+/// MultipleThresholdParameterGraph.h
 /// Shaun Harker
 /// 2015-05-24
 /// Marcio Gameiro
@@ -16,25 +16,23 @@
 #include "Parameter/Parameter.h" 
 #include "Parameter/Configuration.h" 
 
-struct ParameterGraph_;
+struct MultipleThresholdParameterGraph_;
 
-class ParameterGraph {
+class MultipleThresholdParameterGraph {
 public:
   /// constructor
-  ParameterGraph ( void );
+  MultipleThresholdParameterGraph ( void );
 
-  /// ParameterGraph
+  /// MultipleThresholdParameterGraph
   ///   Assign a network to the parameter graph
   ///   Search in path for logic .dat files
-  ParameterGraph ( Network const& network );
-
-  ParameterGraph ( MultipleThresholdNetwork const& network );
+  MultipleThresholdParameterGraph ( MultipleThresholdNetwork const& network );
 
   /// assign
   ///   Assign a network to the parameter graph
   ///   Search in path for logic .dat files
   void
-  assign ( Network const& network );
+  assign ( MultipleThresholdNetwork const& network );
 
   /// size
   ///   Return the number of parameters
@@ -88,7 +86,7 @@ public:
 
   /// network
   ///   Return network
-  Network const
+  MultipleThresholdNetwork const
   network ( void ) const;
 
   /// fixedordersize
@@ -105,15 +103,17 @@ public:
 
   /// operator <<
   ///   Stream out information about parameter graph.
-  friend std::ostream& operator << ( std::ostream& stream, ParameterGraph const& pg );
+  friend std::ostream& operator << ( std::ostream& stream, MultipleThresholdParameterGraph const& pg );
 
 private:
-  std::shared_ptr<ParameterGraph_> data_;
+  std::shared_ptr<MultipleThresholdParameterGraph_> data_;
   uint64_t _factorial ( uint64_t m ) const;
+  static std::vector<uint64_t> _index_to_tail_rep ( uint64_t index );
+  static std::vector<uint64_t> _tail_rep_to_perm ( std::vector<uint64_t> const& tail_rep );
 };
 
-struct ParameterGraph_ {
-  Network network_;
+struct MultipleThresholdParameterGraph_ {
+  MultipleThresholdNetwork network_;
   uint64_t size_;
   uint64_t reorderings_;
   uint64_t fixedordersize_;
@@ -123,6 +123,8 @@ struct ParameterGraph_ {
   std::vector<std::unordered_map<std::string,uint64_t>> factors_inv_;
   std::vector<uint64_t> logic_place_bases_;
   std::vector<uint64_t> order_place_bases_;
+  std::vector<std::vector<uint64_t>> order_index_to_helper_;
+  std::vector<std::unordered_map<std::uint64_t,uint64_t>> helper_to_order_index_;
 };
 
 /// Python Bindings
@@ -132,32 +134,31 @@ struct ParameterGraph_ {
 namespace py = pybind11;
 
 inline void
-ParameterGraphBinding (py::module &m) {
-  py::class_<ParameterGraph, std::shared_ptr<ParameterGraph>>(m, "ParameterGraph")
+MultipleThresholdParameterGraphBinding (py::module &m) {
+  py::class_<MultipleThresholdParameterGraph, std::shared_ptr<MultipleThresholdParameterGraph>>(m, "MultipleThresholdParameterGraph")
     .def(py::init<>())
-    .def(py::init<Network const&>())
     .def(py::init<MultipleThresholdNetwork const&>())
-    .def("size", &ParameterGraph::size)
-    .def("dimension", &ParameterGraph::dimension)
-    .def("logicsize", &ParameterGraph::logicsize)
-    .def("ordersize", &ParameterGraph::ordersize)
-    .def("factorgraph", &ParameterGraph::factorgraph)
-    .def("parameter", &ParameterGraph::parameter)    
-    .def("index", &ParameterGraph::index)
-    .def("adjacencies", &ParameterGraph::adjacencies, py::arg("index"), py::arg("type") = "")
-    .def("network", &ParameterGraph::network)
-    .def("fixedordersize", &ParameterGraph::fixedordersize)
-    .def("reorderings", &ParameterGraph::reorderings)
-    .def("__str__", [](ParameterGraph * lp){ std::stringstream ss; ss << *lp; return ss.str(); })
+    .def("size", &MultipleThresholdParameterGraph::size)
+    .def("dimension", &MultipleThresholdParameterGraph::dimension)
+    .def("logicsize", &MultipleThresholdParameterGraph::logicsize)
+    .def("ordersize", &MultipleThresholdParameterGraph::ordersize)
+    .def("factorgraph", &MultipleThresholdParameterGraph::factorgraph)
+    .def("parameter", &MultipleThresholdParameterGraph::parameter)    
+    .def("index", &MultipleThresholdParameterGraph::index)
+    .def("adjacencies", &MultipleThresholdParameterGraph::adjacencies, py::arg("index"), py::arg("type") = "")
+    .def("network", &MultipleThresholdParameterGraph::network)
+    .def("fixedordersize", &MultipleThresholdParameterGraph::fixedordersize)
+    .def("reorderings", &MultipleThresholdParameterGraph::reorderings)
+    .def("__str__", [](MultipleThresholdParameterGraph * lp){ std::stringstream ss; ss << *lp; return ss.str(); })
     .def(py::pickle(
-    [](ParameterGraph const& p) { // __getstate__
+    [](MultipleThresholdParameterGraph const& p) { // __getstate__
         /* Return a tuple that fully encodes the state of the object */
         return py::make_tuple(p.network());
     },
     [](py::tuple t) { // __setstate__
         if (t.size() != 1)
-            throw std::runtime_error("Unpickling ParameterGraph object: Invalid state!");
+            throw std::runtime_error("Unpickling MultipleThresholdParameterGraph object: Invalid state!");
         /* Create a new C++ instance */
-        return ParameterGraph(t[0].cast<Network>());
+        return MultipleThresholdParameterGraph(t[0].cast<MultipleThresholdNetwork>());
     }));
 }

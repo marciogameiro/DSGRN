@@ -3,6 +3,8 @@
 /// 2015-05-24
 /// Marcio Gameiro
 /// 2020-10-06
+/// Adam Zheleznyak
+/// 2021-01-18
 
 #pragma once
 
@@ -20,6 +22,11 @@ ParameterGraph ( void ) {
 INLINE_IF_HEADER_ONLY ParameterGraph::
 ParameterGraph ( Network const& network ) {
   assign ( network );
+}
+
+INLINE_IF_HEADER_ONLY ParameterGraph::
+ParameterGraph ( MultipleThresholdNetwork const& network ) {
+  throw std::runtime_error ( "Please use MultipleThresholdParameterGraph for a MultipleThresholdNetwork" );
 }
 
 INLINE_IF_HEADER_ONLY void ParameterGraph::
