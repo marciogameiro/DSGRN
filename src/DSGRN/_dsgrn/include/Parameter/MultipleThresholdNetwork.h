@@ -6,7 +6,7 @@
 /// 2021-01-02
 ///
 /// Adam Zheleznyak
-/// 2021-01-10
+/// 2021-02-19
 
 #pragma once
 
@@ -72,11 +72,6 @@ public:
   std::vector<uint64_t> const&
   outputs ( uint64_t index ) const;
 
-  /// threshold_count
-  ///   Returns the number of thresholds for an edge
-  uint64_t
-  threshold_count ( uint64_t source, uint64_t target ) const;
-
   /// logic
   ///   Return the logic of a node (given by index)
   std::vector<std::vector<uint64_t>> const&
@@ -90,7 +85,7 @@ public:
   /// interaction
   ///   Return the interaction type of an edge:
   ///   False for repression, true for activation
-  bool
+  std::vector<bool>
   interaction ( uint64_t source, uint64_t target ) const;
 
   /// order
@@ -123,7 +118,7 @@ public:
   } ) const;
 
   /// operator <<
-  friend std::ostream& operator << ( std::ostream& stream, MultipleThresholdNetwork const& network );
+//  friend std::ostream& operator << ( std::ostream& stream, MultipleThresholdNetwork const& network );
 
 private:
   std::shared_ptr<MultipleThresholdNetwork_> data_;
@@ -135,10 +130,9 @@ private:
 struct MultipleThresholdNetwork_ {
   std::vector<std::vector<uint64_t>> inputs_;
   std::vector<std::vector<uint64_t>> outputs_;
-  std::unordered_map<std::pair<uint64_t,uint64_t>, uint64_t, dsgrn::hash<std::pair<uint64_t,uint64_t>>> threshold_count_;
   std::unordered_map<std::string, uint64_t> index_by_name_;
   std::vector<std::string> name_by_index_;
-  std::unordered_map<std::pair<uint64_t,uint64_t>, bool, dsgrn::hash<std::pair<uint64_t,uint64_t>>> edge_type_;
+  std::unordered_map<std::pair<uint64_t,uint64_t>, std::vector<bool>, dsgrn::hash<std::pair<uint64_t,uint64_t>>> edge_type_;
   // Use (source, target, instance) to allow multiple edges
   // TODO: Use unordered_map to make it more efficient
   std::map<std::tuple<uint64_t,uint64_t>, uint64_t> order_;
@@ -168,7 +162,6 @@ MultipleThresholdNetworkBinding (py::module &m) {
     .def("name", &MultipleThresholdNetwork::name)
     .def("inputs", &MultipleThresholdNetwork::inputs)
     .def("outputs", &MultipleThresholdNetwork::outputs)
-    .def("threshold_count", &MultipleThresholdNetwork::threshold_count)
     .def("logic", &MultipleThresholdNetwork::logic)
     .def("essential", &MultipleThresholdNetwork::essential)
     .def("interaction", &MultipleThresholdNetwork::interaction)

@@ -76,12 +76,6 @@ assign ( MultipleThresholdNetwork const& network ) {
   for ( uint64_t d = 0; d < D; ++ d ) {
     uint64_t n = data_ -> network_ . helper_network() . inputs ( d ) . size ();
     uint64_t m = data_ -> network_ . helper_network() . outputs ( d ) . size ();
-//    uint64_t order_count = _factorial ( m );
-//    for ( auto const& output : data_ ->  network_ . outputs ( d ) ) {
-//      if ( data_ -> network_ . threshold_count( d, output ) > 1 ) {
-//        order_count /= _factorial ( data_ -> network_ . threshold_count( d, output ) );
-//      }
-//    }
     
     //Suboptimal but filter through all parameters based on index and ignore the ones where the order is unachievable
     
@@ -92,7 +86,7 @@ assign ( MultipleThresholdNetwork const& network ) {
     
     for ( auto const& output : data_ ->  network_ . outputs ( d ) ) {
       first_threshold_index . push_back ( count );
-      count += data_ -> network_ . threshold_count( d, output );
+      count += data_ -> network_ . interaction( d, output ).size();
     }
     
     count = 0;
@@ -148,13 +142,19 @@ assign ( MultipleThresholdNetwork const& network ) {
     for ( auto const& factor : data_ -> network_ . helper_network() . logic ( d ) ) {
       for ( auto const& input : factor ) {
         if ( std::find(handled_inputs.begin(), handled_inputs.end(), input ) == handled_inputs.end() ) {
-          uint64_t threshold_count = data_ -> network_ . threshold_count( input, d );
+          uint64_t threshold_count = data_ -> network_ . interaction( input, d ) . size();
           if ( threshold_count > 1 ) {
             multiple_thresholds_in = true;
           }
           std::vector<uint64_t> good_bits;
+          std::vector<uint64_t> threshold_scan;
+          std::vector<bool> interaction = data_ -> network_ . interaction( input, d );
+          std::transform ( interaction . begin(), interaction . end(),  std::back_inserter( threshold_scan ), [](bool b) -> uint64_t { return uint64_t(!b); } );
+          std::vector<uint64_t> powers_of_two = _powers_of_two(threshold_count);
           for ( uint64_t i = 0; i <= threshold_count; i++ ) {
-            good_bits . push_back ( pow( 2, i ) - 1 );
+            good_bits . push_back ( std::inner_product( powers_of_two.begin(), powers_of_two.end(), threshold_scan.begin(), 0 ) );
+            //std::cout << good_bits[i] << "\n";
+            threshold_scan[i] = 1 - threshold_scan[i];
           }
           for ( uint64_t bit = 0; bit < pow( 2, threshold_count ); bit++ ) {
             if ( std::find(good_bits.begin(), good_bits.end(), bit ) == good_bits.end() ) {
@@ -451,6 +451,16 @@ _factorial ( uint64_t m ) const {
   static const std::vector<uint64_t> table =
     { 1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880};
   if ( m < 10 ) return table [ m ]; else return m * _factorial ( m - 1 );
+}
+
+INLINE_IF_HEADER_ONLY std::vector<uint64_t> MultipleThresholdParameterGraph::
+_powers_of_two ( uint64_t length ) const {
+  std::vector<uint64_t> result;
+  result . push_back (1);
+  for ( uint64_t i = 1; i < length; i++ ) {
+    result . push_back (2 * result[i-1]);
+  }
+  return result;
 }
 
 INLINE_IF_HEADER_ONLY std::vector<uint64_t> MultipleThresholdParameterGraph::

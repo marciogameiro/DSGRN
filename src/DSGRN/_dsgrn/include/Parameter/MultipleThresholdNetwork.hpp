@@ -6,7 +6,7 @@
 /// 2021-01-02
 ///
 /// Adam Zheleznyak
-/// 2021-01-10
+/// 2021-02-19
 
 #pragma once
 
@@ -83,11 +83,6 @@ outputs ( uint64_t index ) const {
   return data_ ->  outputs_[index];
 }
 
-INLINE_IF_HEADER_ONLY uint64_t MultipleThresholdNetwork:: 
-threshold_count ( uint64_t source, uint64_t target ) const {
-  return data_ -> threshold_count_ . find ( std::make_pair ( source, target ) ) -> second;
-}
-
 INLINE_IF_HEADER_ONLY std::vector<std::vector<uint64_t>> const& MultipleThresholdNetwork::
 logic ( uint64_t index ) const {
   return data_ ->  logic_by_index_ [ index ];
@@ -98,7 +93,7 @@ essential ( uint64_t index ) const {
   return data_ -> essential_ [ index ];
 }
 
-INLINE_IF_HEADER_ONLY bool MultipleThresholdNetwork::
+INLINE_IF_HEADER_ONLY std::vector<bool> MultipleThresholdNetwork::
 interaction ( uint64_t source, uint64_t target ) const {
   return data_ ->  edge_type_ . find ( std::make_pair ( source, target ) ) -> second;
 }
@@ -146,10 +141,32 @@ graphviz ( std::vector<std::string> const& theme ) const {
     for ( auto const& part : logic_struct ) {
       for ( uint64_t source : part ) {
         // std::cout << "Checking type of edge from " << source << " to " << target << "\n";
-        std::string head = ( interaction(source,target) ) ? normalhead : blunthead;
-        result << "\"" << name(source) << "\" -> \"" << name(target) << "\" [color=" << theme[partnum+2] << " arrowhead=\"" << head << "\"";
-        if ( threshold_count(source,target) > 1 ) {
-          result << " label=\"[" << threshold_count(source,target) << "]\"";
+        if ( interaction(source, target).size() == 1 ) {
+          std::string head = ( interaction(source,target)[0] ) ? normalhead : blunthead;
+          result << "\"" << name(source) << "\" -> \"" << name(target) << "\" [color=" << theme[partnum+2] << " arrowhead=\"" << head << "\"";
+        } else {
+          std::string label;
+          bool has_activating = false;
+          bool has_repressing = false;
+          for ( auto const& sign : interaction(source, target) ) {
+            if (sign) {
+              label += "+";
+              has_activating = true;
+            } else {
+              label += "-";
+              has_repressing = true;
+            }
+          }
+          if (has_activating && !has_repressing) {
+            result << "\"" << name(source) << "\" -> \"" << name(target) << "\" [color=" << theme[partnum+2] << " arrowhead=\"" << normalhead << "\"";
+            result << " label=\"[" << interaction(source, target).size() << "]\"";
+          } else if (!has_activating && has_repressing) {
+            result << "\"" << name(source) << "\" -> \"" << name(target) << "\" [color=" << theme[partnum+2] << " arrowhead=\"" << blunthead << "\"";
+            result << " label=\"[" << interaction(source, target).size() << "]\"";
+          } else {
+            result << "\"" << name(source) << "\" -> \"" << name(target) << "\" [color=" << theme[partnum+2] << " arrowhead=\"" << normalhead << "\"";
+            result << " label=\"[" << label << "]\"";
+          }
         }
         result << "];\n";
       }
@@ -258,17 +275,26 @@ _parse ( std::vector<std::string> const& lines ) {
       }
       uint64_t source = data_ -> index_by_name_ [ splittoken[0] ];
       factor . push_back ( source );
-      data_ -> edge_type_[std::make_pair( source, target )] = parity;
-      
       if (splittoken.size() > 1) {
         //this means there was something inside brackets
-        //TODO: Allow other ways to specify thresholds
         //std::cout << "  Threshold string: " << splittoken[1] << "\n";
-        data_ -> threshold_count_[std::make_pair( source, target )] = std::stoi( splittoken[1] );
+        try {
+          uint64_t threshold_count = std::stoi( splittoken[1] );
+          for (uint64_t i = 0; i < threshold_count; i++) {
+            data_ -> edge_type_[std::make_pair( source, target )] . push_back ( parity );
+          }
+        } catch ( const std::invalid_argument& e ) {
+          for(char& c : splittoken[1]) {
+            if (c == '+') {
+              data_ -> edge_type_[std::make_pair( source, target )] . push_back ( parity );
+            } else if (c == '-') {
+              data_ -> edge_type_[std::make_pair( source, target )] . push_back ( !parity );
+            }
+          }
+        }
       } else {
-        data_ -> threshold_count_[std::make_pair( source, target )] = 1;
+        data_ -> edge_type_[std::make_pair( source, target )] . push_back ( parity );
       }
-      
       //std::cout << "Creating edge from " << source << " to " << target << "\n";
       token . clear ();
       appending = false;
@@ -365,17 +391,15 @@ _parse ( std::vector<std::string> const& lines ) {
       helper_specification += '(';
       bool plus = false;
       for ( auto source : factor ) {
-        if (interaction( source, target )) {
-          for( uint64_t count = 0; count < data_ -> threshold_count_[std::make_pair( source, target )]; count++) {
+        for ( auto sign : interaction( source, target ) ){
+          if ( sign ) {
             if (plus) {
               helper_specification += " + " + data_ -> name_by_index_[source];
             } else {
               helper_specification += data_ -> name_by_index_[source];
               plus = true;
             }
-          }
-        } else {
-          for( uint64_t count = 0; count < data_ -> threshold_count_[std::make_pair( source, target )]; count++) {
+          } else {
             if (plus) {
               helper_specification += " + ~" + data_ -> name_by_index_[source];
             } else {
@@ -397,37 +421,37 @@ _parse ( std::vector<std::string> const& lines ) {
   //std::cout << "_parse complete.\n";
 }
 
-// TODO: Not sure where this is used, so I opted to leave this be for now
-INLINE_IF_HEADER_ONLY std::ostream& operator << ( std::ostream& stream, MultipleThresholdNetwork const& network ) {
-  stream << "[";
-  bool first1 = true;
-  for ( uint64_t v = 0; v < network.size (); ++ v ) {
-    if ( first1 ) first1 = false; else stream << ",";
-    stream << "[\"" << network.name(v) << "\","; // node
-    std::vector<std::vector<uint64_t>> logic_struct = network.logic ( v );
-    stream << "["; // logic_struct
-    bool first2 = true;
-    for ( auto const& part : logic_struct ) {
-      if ( first2 ) first2 = false; else stream << ",";
-      stream << "["; // factor
-      bool first3 = true;
-      for ( uint64_t source : part ) {
-        if ( first3 ) first3 = false; else stream << ",";
-        std::string head = network.interaction(source,v) ? "" : "~";
-        stream << "\"" << head << network.name(source) << "\"";
-      }
-      stream << "]"; // factor
-    }
-    stream << "],"; // logic_struct
-    stream << "["; // outputs
-    bool first4 = true;
-    for ( uint64_t target : network.outputs ( v ) ) {
-      if ( first4 ) first4 = false; else stream << ",";
-      stream << "\"" << network.name(target) << "\"";
-    }
-    stream << "]"; // outputs 
-    stream << "]"; // node
-  }  
-  stream << "]"; // network
-  return stream;
-}
+
+//INLINE_IF_HEADER_ONLY std::ostream& operator << ( std::ostream& stream, MultipleThresholdNetwork const& network ) {
+//  stream << "[";
+//  bool first1 = true;
+//  for ( uint64_t v = 0; v < network.size (); ++ v ) {
+//    if ( first1 ) first1 = false; else stream << ",";
+//    stream << "[\"" << network.name(v) << "\","; // node
+//    std::vector<std::vector<uint64_t>> logic_struct = network.logic ( v );
+//    stream << "["; // logic_struct
+//    bool first2 = true;
+//    for ( auto const& part : logic_struct ) {
+//      if ( first2 ) first2 = false; else stream << ",";
+//      stream << "["; // factor
+//      bool first3 = true;
+//      for ( uint64_t source : part ) {
+//        if ( first3 ) first3 = false; else stream << ",";
+//        std::string head = network.interaction(source,v) ? "" : "~";
+//        stream << "\"" << head << network.name(source) << "\"";
+//      }
+//      stream << "]"; // factor
+//    }
+//    stream << "],"; // logic_struct
+//    stream << "["; // outputs
+//    bool first4 = true;
+//    for ( uint64_t target : network.outputs ( v ) ) {
+//      if ( first4 ) first4 = false; else stream << ",";
+//      stream << "\"" << network.name(target) << "\"";
+//    }
+//    stream << "]"; // outputs 
+//    stream << "]"; // node
+//  }  
+//  stream << "]"; // network
+//  return stream;
+//}

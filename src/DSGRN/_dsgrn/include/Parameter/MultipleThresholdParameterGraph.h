@@ -108,6 +108,7 @@ public:
 private:
   std::shared_ptr<MultipleThresholdParameterGraph_> data_;
   uint64_t _factorial ( uint64_t m ) const;
+  std::vector<uint64_t> _powers_of_two ( uint64_t length ) const;
   static std::vector<uint64_t> _index_to_tail_rep ( uint64_t index );
   static std::vector<uint64_t> _tail_rep_to_perm ( std::vector<uint64_t> const& tail_rep );
 };
