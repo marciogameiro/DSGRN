@@ -3,7 +3,7 @@
 /// 2015-05-22
 ///
 /// Marcio Gameiro
-/// 2021-07-13
+/// 2023-09-30
 
 #pragma once
 
@@ -25,7 +25,10 @@ public:
   ///   Construct network
   ///   If s contains a colon character (i.e. ':') it assumes s is a network specification.
   ///   Otherwise, it assumes s is a filename and attempts to load a network specification.
-  Network ( std::string const& s );
+  ///   Do a blowup of negative self-edges, positive self-edges, both, or none, if
+  ///   edge_blowup == "neg", "pos", "all", or "none", respectively. The default is to do a
+  ///   blowup of negative self-edges only.
+  Network ( std::string const& s, std::string const& edge_blowup = "" );
 
   /// assign
   ///   Delayed construction of default constructed object
@@ -83,6 +86,11 @@ public:
   bool
   pos_edge_blowup ( void ) const;
 
+  /// neg_edge_blowup
+  ///   Return whether or not to blowup negative self-edges
+  bool
+  neg_edge_blowup ( void ) const;
+
   /// num_thresholds
   ///   Return the number of thresholds
   uint64_t
@@ -137,6 +145,7 @@ struct Network_ {
   std::vector<bool> essential_;
   std::string specification_;
   bool pos_edge_blowup_ = false; // Blowup positive self-edges if true
+  bool neg_edge_blowup_ = true;  // Blowup negative self-edges if true
 };
 
 /// Python Bindings
@@ -149,7 +158,7 @@ inline void
 NetworkBinding (py::module &m) {
   py::class_<Network, std::shared_ptr<Network>>(m, "Network")
     .def(py::init<>())
-    .def(py::init<std::string const&>())
+    .def(py::init<std::string const&, std::string const&>(), py::arg("s"), py::arg("edge_blowup") = "")
     .def("load", &Network::load)
     .def("assign", &Network::assign)
     .def("size", &Network::size)
@@ -161,6 +170,7 @@ NetworkBinding (py::module &m) {
     .def("essential", &Network::essential)
     .def("interaction", &Network::interaction)
     .def("pos_edge_blowup", &Network::pos_edge_blowup)
+    .def("neg_edge_blowup", &Network::neg_edge_blowup)
     .def("num_thresholds", &Network::num_thresholds)
     .def("order", &Network::order)
     .def("domains", &Network::domains)

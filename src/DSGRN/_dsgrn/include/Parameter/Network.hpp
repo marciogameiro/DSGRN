@@ -3,7 +3,7 @@
 /// 2015-05-22
 ///
 /// Marcio Gameiro
-/// 2021-07-13
+/// 2023-09-30
 
 #pragma once
 
@@ -14,12 +14,41 @@
 #include "Network.h"
 
 INLINE_IF_HEADER_ONLY Network::
-Network ( void ) { 
+Network ( void ) {
   data_ . reset ( new Network_ );
 }
 
 INLINE_IF_HEADER_ONLY Network::
-Network ( std::string const& s ) {
+Network ( std::string const& s, std::string const& edge_blowup ) {
+  // The default value for edge_blowup is "", which uses the default "neg"
+  std::string e_blowup = edge_blowup.empty() ? "neg" : edge_blowup;
+  // Remove leading and trailing whitespaces of e_blowup
+  e_blowup = std::regex_replace(e_blowup, std::regex("^ +| +$|( ) +"), "$1");
+  // Transform all letters of e_blowup to lower case
+  std::transform(e_blowup.begin(), e_blowup.end(), e_blowup.begin(), ::tolower);
+  // Check if edge blowup flag e_blowup is valid
+  if ( not ( e_blowup == "neg" or e_blowup == "pos" or e_blowup == "all" or e_blowup == "none" ) ) {
+    throw std::runtime_error ( "Invalid edge blowup flag!" );
+  }
+  // Create the network
+  data_ . reset ( new Network_ );
+  // The default is to blowup negative self-edges only
+  // Change the default values if necessary
+  if ( e_blowup == "pos" ) {
+    // Blowup positive self-edges only
+    data_ -> pos_edge_blowup_ = true;
+    data_ -> neg_edge_blowup_ = false;
+  }
+  if ( e_blowup == "all" ) {
+    // Blowup all self-edges
+    data_ -> pos_edge_blowup_ = true;
+    data_ -> neg_edge_blowup_ = true;
+  }
+  if ( e_blowup == "none" ) {
+    // Do not blowup self-edges
+    data_ -> pos_edge_blowup_ = false;
+    data_ -> neg_edge_blowup_ = false;
+  }
   assign(s);
 }
 
@@ -27,7 +56,6 @@ INLINE_IF_HEADER_ONLY void Network::
 assign ( std::string const& s ) {
   auto colon = s.find(':');
   if ( colon != std::string::npos ) {
-    data_ . reset ( new Network_ );
     data_ -> specification_ = s;
     _parse ( _lines () );
   } else {
@@ -37,7 +65,6 @@ assign ( std::string const& s ) {
 
 INLINE_IF_HEADER_ONLY void Network::
 load ( std::string const& filename ) {
-  data_ . reset ( new Network_ );
   std::ifstream infile ( filename );
   if ( not infile . good () ) {
     throw std::runtime_error ( "Problem loading network specification file " + filename );
@@ -93,6 +120,11 @@ interaction ( uint64_t source, uint64_t target ) const {
 INLINE_IF_HEADER_ONLY bool Network::
 pos_edge_blowup ( void ) const {
   return data_ -> pos_edge_blowup_;
+}
+
+INLINE_IF_HEADER_ONLY bool Network::
+neg_edge_blowup ( void ) const {
+  return data_ -> neg_edge_blowup_;
 }
 
 INLINE_IF_HEADER_ONLY uint64_t Network::
@@ -341,10 +373,16 @@ _parse ( std::vector<std::string> const& lines ) {
         n_self_edges = 0;
       }
     }
+    // Do not count negative self edges if neg_edge_blowup is false
+    if ( ( not neg_edge_blowup () ) and ( n_self_edges > 0 ) ) {
+      if ( not interaction ( d, d ) ) { // If negative self edge
+        n_self_edges = 0;
+      }
+    }
     // Each self edge creates an additional threshold
     data_ -> num_thresholds_[d] = m + n_self_edges;
   }
-  //std::cout << "_parse complete.\n";
+  // std::cout << "_parse complete.\n";
 }
 
 INLINE_IF_HEADER_ONLY std::ostream& operator << ( std::ostream& stream, Network const& network ) {
@@ -376,7 +414,7 @@ INLINE_IF_HEADER_ONLY std::ostream& operator << ( std::ostream& stream, Network 
     }
     stream << "]"; // outputs 
     stream << "]"; // node
-  }  
+  }
   stream << "]"; // network
   return stream;
 }

@@ -3,7 +3,7 @@
 /// 2015-05-24
 ///
 /// Marcio Gameiro
-/// 2021-07-13
+/// 2023-09-30
 
 #pragma once
 
@@ -262,6 +262,11 @@ labelling ( void ) const {
     }
   }
 
+  // Return result if not not doing any self-edge blowup
+  if ( ( not network() . pos_edge_blowup () ) and ( not network() . neg_edge_blowup () ) ) {
+    return result;
+  }
+
   // Next we create an extended complex by blowing up the
   // co-dimension 1 faces defined by thresholds corresponding
   // to self (repressing) edges. We first blow up all the
@@ -324,6 +329,9 @@ labelling ( void ) const {
           } // Do not blowup positive self edges if pos_edge_blowup is false
           else if ( ( not network() . pos_edge_blowup () ) and ( network() . interaction ( d, d ) ) ) {
             keep_domain = false; // Positive self edge blowup domain
+          } // Do not blowup negative self edges if neg_edge_blowup is false
+          else if ( ( not network() . neg_edge_blowup () ) and ( not network() . interaction ( d, d ) ) ) {
+            keep_domain = false; // Negative self edge blowup domain
           }
         }
       } else { // Regular domain
