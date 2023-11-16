@@ -1,0 +1,78 @@
+# Build and test wheels on pushes to master
+# Run on a single Python version
+name: Build and test wheels
+
+on:
+  push:
+    branches:
+      - master
+  # Manual run
+  workflow_dispatch:
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  # Build wheels for Linux, macOS, and Windows
+  build_wheels:
+    name: Wheel for ${{ matrix.buildplat[0] }}-${{ matrix.python }}_${{ matrix.buildplat[1] }}
+    runs-on: ${{ matrix.buildplat[0] }}
+
+    strategy:
+      # Build the other wheels even if one fails
+      fail-fast: false
+      matrix:
+        buildplat:
+          - [ubuntu-latest, x86_64]
+          - [ubuntu-latest, aarch64]
+          - [ubuntu-latest, i686]
+          - [macos-latest, x86_64]
+          - [macos-latest, arm64]
+          - [windows-latest, AMD64]
+          - [windows-latest, x86]
+        python: ['cp310', 'pp39']
+        exclude:
+          - buildplat: [macos-latest, arm64]
+            python: 'pp39'
+          - buildplat: [windows-latest, x86]
+            python: 'pp39'
+
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+        if: matrix.buildplat[1] == 'aarch64'
+
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.16.2
+        env:
+          CIBW_BUILD: ${{ matrix.python }}-*
+          CIBW_ARCHS: ${{ matrix.buildplat[1] }}
+          CIBW_BEFORE_BUILD_WINDOWS: pip install delvewheel
+          CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: delvewheel repair -w {dest_dir} {wheel}
+        with:
+          output-dir: wheelhouse
+
+      - name: Show files
+        run: ls -lh wheelhouse
+        shell: bash
+
+      - name: Verify clean directory
+        run: git diff --exit-code
+        shell: bash
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: wheelhouse/*.whl

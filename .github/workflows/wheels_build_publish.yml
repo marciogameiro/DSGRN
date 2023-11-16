@@ -1,15 +1,11 @@
 # Build and publish Python distribution package to TestPyPI and PyPI
+# Trigger build only when a tag is pushed
 name: Build and publish wheels
 
 on:
   push:
-    branches:
-      - master
     tags:
       - v* # Push events to v* tags
-  # pull_request:
-  #   branches:
-  #     - master
   # Manual run
   workflow_dispatch:
 
@@ -17,42 +13,60 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  # Build wheels for macOS, Linux, and Windows
+  # Build wheels for Linux, macOS, and Windows
   build_wheels:
-    name: Wheel for ${{ matrix.os }}-cp${{ matrix.python }}
+    name: Wheel for ${{ matrix.os }}-${{ matrix.cibw_build }}_${{ matrix.cibw_archs }}
     runs-on: ${{ matrix.os }}
 
     strategy:
       # Build the other wheels even if one fails
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
-        python: [38, 39, 310, 311, 312]
+        include:
+          - { os: ubuntu-latest,  cibw_archs: x86_64,   cibw_build: 'cp*-manylinux*' }
+          - { os: ubuntu-latest,  cibw_archs: x86_64,   cibw_build: 'cp*-musllinux*' }
+          - { os: ubuntu-latest,  cibw_archs: x86_64,   cibw_build: 'pp*'            }
+          - { os: ubuntu-latest,  cibw_archs: aarch64,  cibw_build: 'cp*-manylinux*' }
+          - { os: ubuntu-latest,  cibw_archs: aarch64,  cibw_build: 'cp*-musllinux*' }
+          - { os: ubuntu-latest,  cibw_archs: aarch64,  cibw_build: 'pp*'            }
+          - { os: ubuntu-latest,  cibw_archs: i686,     cibw_build: 'cp*-manylinux*' }
+          - { os: ubuntu-latest,  cibw_archs: i686,     cibw_build: 'cp*-musllinux*' }
+          - { os: ubuntu-latest,  cibw_archs: i686,     cibw_build: 'pp*'            }
+          - { os: macos-latest,   cibw_archs: x86_64,   cibw_build: 'cp*'            }
+          - { os: macos-latest,   cibw_archs: x86_64,   cibw_build: 'pp*'            }
+          - { os: macos-latest,   cibw_archs: arm64,    cibw_build: 'cp*'            }
+          - { os: windows-latest, cibw_archs: AMD64,    cibw_build: 'cp*'            }
+          - { os: windows-latest, cibw_archs: AMD64,    cibw_build: 'pp*'            }
+          - { os: windows-latest, cibw_archs: x86,      cibw_build: 'cp*'            }
+          # Building wheels for windows ARM64 is not working
+          # - { os: windows-latest, cibw_archs: ARM64,    cibw_build: 'cp*'            }
 
     steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+        if: matrix.cibw_archs == 'aarch64'
+
       - name: Checkout repository and submodules
         uses: actions/checkout@v4
         with:
           submodules: true
 
-      # - name: Set up Python
-      #   uses: actions/setup-python@v4
-      #   with:
-      #     python-version: '3.x'
-
-      # - name: Install cibuildwheel
-      #   run: python -m pip install cibuildwheel
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
 
       - name: Build wheels
-        # run:
-        #   python -m cibuildwheel --output-dir wheelhouse
-        uses: pypa/cibuildwheel@v2.16.1
+        uses: pypa/cibuildwheel@v2.16.2
         env:
-          CIBW_BUILD: cp${{ matrix.python }}-*
-          # CIBW_ARCHS: all
-          # CIBW_ARCHS_LINUX: auto aarch64
-          CIBW_ARCHS_MACOS: x86_64 arm64
-          # CIBW_ARCHS_MACOS: x86_64 arm64 universal2
+          CIBW_BUILD: ${{ matrix.cibw_build }}
+          CIBW_ARCHS: ${{ matrix.cibw_archs }}
+          CIBW_BEFORE_BUILD_WINDOWS: pip install delvewheel
+          CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: delvewheel repair -w {dest_dir} {wheel}
+        with:
+          output-dir: wheelhouse
 
       - name: Show files
         run: ls -lh wheelhouse
