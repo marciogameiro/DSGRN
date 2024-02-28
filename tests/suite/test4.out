@@ -1,9 +1,9 @@
 digraph {
-0[label="XC {X, Z}"];
-1[label="XC {X, Z}"];
-2[label="XC {X, Z}"];
-3[label="XC {X, Z}"];
-4[label="XC {X, Y1, Y2}"];
+0[label="PC {X, Z}"];
+1[label="PC {X, Z}"];
+2[label="PC {X, Z}"];
+3[label="PC {X, Z}"];
+4[label="PC {X, Y1, Y2}"];
 5[label="FP { 2, 0, 0, 1 }"];
 6[label="FP { 3, 1, 1, 1 }"];
 0 -> 1;
@@ -13,4 +13,3 @@ digraph {
 4 -> 5;
 4 -> 6;
 }
-

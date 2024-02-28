@@ -1,8 +1,7 @@
 digraph {
-0[label="XC {X1, X3}"];
-1[label="XC {X1, X3}"];
-2[label="XC {X1, X3}"];
+0[label="PC {X1, X3}"];
+1[label="PC {X1, X3}"];
+2[label="PC {X1, X3}"];
 0 -> 2;
 1 -> 2;
 }
-

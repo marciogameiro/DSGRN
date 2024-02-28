@@ -1,6 +1,9 @@
 /// WallGraph.hpp
 /// Shaun Harker
 /// 2015-05-24
+///
+/// Marcio Gameiro
+/// 2024-02-27
 
 #pragma once
 
@@ -147,7 +150,7 @@ annotate ( Component const& vertices ) const {
   } else if ( signature . size () == D ) {
     ss << "FC";
   } else {
-    ss << "XC {";
+    ss << "PC {";
     bool first_term = true;
     for ( uint64_t d : signature ) {
       if ( first_term ) first_term = false; else ss << ", ";
