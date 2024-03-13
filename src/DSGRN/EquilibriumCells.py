@@ -3,7 +3,7 @@
 # MIT LICENSE
 # 2021-07-03
 
-import pychomp2
+import pychomp
 
 __all__ = ['EquilibriumCells']
 
@@ -22,7 +22,7 @@ def EquilibriumCells(parameter, eqtype='all', eqformat='coords'):
     network = parameter.network()
     D = network.size()
     # Use a cubical complex to access lower dimensional cells
-    cc = pychomp2.CubicalComplex([n + 1 for n in network.domains()])
+    cc = pychomp.CubicalComplex([n + 1 for n in network.domains()])
     labelling = parameter.labelling()
     limits = network.domains()
     pv = [1]

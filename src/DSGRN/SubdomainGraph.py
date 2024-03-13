@@ -6,7 +6,7 @@
 # Marcio Gameiro
 # 2021-03-26
 
-from pychomp2 import *
+from pychomp import *
 import datetime
 from itertools import product
 from math import log2
