@@ -55,7 +55,7 @@ jobs:
           python-version: '3.x'
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.16.5
+        uses: pypa/cibuildwheel@v2.17.0
         env:
           CIBW_BUILD: ${{ matrix.python }}-*
           CIBW_ARCHS: ${{ matrix.buildplat[1] }}
