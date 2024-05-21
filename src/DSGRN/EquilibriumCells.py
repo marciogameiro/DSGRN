@@ -1,7 +1,7 @@
 # EquilibriumCells.py
 # Marcio Gameiro
 # MIT LICENSE
-# 2021-07-03
+# 2024-05-21
 
 import pychomp
 
@@ -18,13 +18,20 @@ def EquilibriumCells(parameter, eqtype='all', eqformat='coords'):
     eqformat_vals = ['coords', 'c', 'index', 'i']
     if eqformat not in eqformat_vals:
         raise ValueError(f"Invalid value '{eqformat}' for eqformat. Supported values are: {', '.join(map(repr,eqformat_vals))}.")
-    # Get network information
-    network = parameter.network()
+    # Get the parameter index in the original parameter graph
+    original_par_graph = DSGRN.ParameterGraph(parameter.network())
+    par_index = original_par_graph.index(parameter)
+    # Redefine network without self edges blowup
+    net_spec = parameter.network().specification()
+    network = DSGRN.Network(net_spec, edge_blowup='none')
+    # Get the parameter in the new parameter graph
+    parameter_graph = DSGRN.ParameterGraph(network)
+    parameter = parameter_graph.parameter(par_index)
     D = network.size()
+    limits = [len(network.outputs(d)) + 1 for d in range(D)]
     # Use a cubical complex to access lower dimensional cells
-    cc = pychomp.CubicalComplex([n + 1 for n in network.domains()])
+    cc = pychomp.CubicalComplex([n + 1 for n in limits])
     labelling = parameter.labelling()
-    limits = network.domains()
     pv = [1]
     for k in limits:
         pv.append(pv[-1] * k)
