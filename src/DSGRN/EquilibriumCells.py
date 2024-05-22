@@ -3,6 +3,7 @@
 # MIT LICENSE
 # 2024-05-21
 
+import DSGRN
 import pychomp
 
 __all__ = ['EquilibriumCells']
