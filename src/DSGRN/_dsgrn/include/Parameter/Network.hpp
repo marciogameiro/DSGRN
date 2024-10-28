@@ -544,15 +544,15 @@ _parse ( std::vector<std::string> const& lines ) {
       return false;
     };
 
-    // Check if factor is a ptm factor
-    auto ptmfactor = [&](auto const& factor) {
-      for ( auto edge : factor ) {
-        bool ptm_flag = std::get<2>(edge);
-        if ( ptm_flag )
-          return true;
-      }
-      return false;
-    };
+    // // Check if factor is a ptm factor
+    // auto ptmfactor = [&](auto const& factor) {
+    //   for ( auto edge : factor ) {
+    //     bool ptm_flag = std::get<2>(edge);
+    //     if ( ptm_flag )
+    //       return true;
+    //   }
+    //   return false;
+    // };
 
     // Get number of ptm edges in factor
     auto num_ptm_edges = [&](auto const& factor) {
@@ -565,50 +565,35 @@ _parse ( std::vector<std::string> const& lines ) {
       return num_ptmedges;
     };
 
-    // Compare factors by (ptm size, size, max), where ptm size is the
-    // number of ptm pairs plus the number of regular edges, size is length,
-    // and max is maximum index, but put ptm decay factors first, regular
-    // decay factors second, ptm factors third, and regular factors last
+    // Compare factors by (total order size, reverse ptm size, max),
+    // where total order size is the number of ptm pairs plus the number
+    // of regular edges, ptm size is the number of ptm pairs, and max is
+    // maximum index, but put decay factors before non-decay factors
     auto cmp_factors = [&](auto const& lhs, auto const& rhs) {
-      // Put ptm decay factors first
-      if ( ( decayfactor ( lhs ) and ptmfactor ( lhs ) ) and
-           ( not decayfactor ( rhs ) or not ptmfactor ( rhs ) ) )
-        return true;
-      if ( ( decayfactor ( rhs ) and ptmfactor ( rhs ) ) and
-           ( not decayfactor ( lhs ) or not ptmfactor ( lhs ) ) )
-        return false;
-      // Put regular decay factors second
+      // Put decay factors first
       if ( decayfactor ( lhs ) and not decayfactor ( rhs ) )
         return true;
       if ( decayfactor ( rhs ) and not decayfactor ( lhs ) )
         return false;
-      // Put ptm factors third
-      if ( ptmfactor ( lhs ) and not ptmfactor ( rhs ) )
+      // Compare the remaining factors by (total order size, reverse
+      // ptm size, max), where total order size is the number of ptm
+      // pairs plus the number of regular edges, ptm size is the number
+      // of ptm pairs, and max is maximum index.
+      // Compare factors by number of ptm pairs plus regular edges
+      uint64_t n_ptm_edges_lhs = num_ptm_edges (lhs);
+      uint64_t n_ptm_edges_rhs = num_ptm_edges (rhs);
+      // Size of total order factor (num ptm pairs plus num regular edges)
+      uint64_t size_lhs = (n_ptm_edges_lhs / 2) + (lhs . size () - n_ptm_edges_lhs);
+      uint64_t size_rhs = (n_ptm_edges_rhs / 2) + (rhs . size () - n_ptm_edges_rhs);
+      if ( size_lhs < size_rhs )
         return true;
-      if ( ptmfactor ( rhs ) and not ptmfactor ( lhs ) )
+      if ( size_rhs < size_lhs )
         return false;
-      // Compare the remaining factors by (ptm size, size, max), where
-      // ptm size is the number of ptm pairs plus the number of regular
-      // edges, size is length, and max is maximum index.
-      // Compare ptm factors by number of ptm pairs plus regular edges
-      if ( ptmfactor ( lhs ) and ptmfactor ( rhs ) ) {
-        uint64_t n_ptm_edges_lhs = num_ptm_edges (lhs);
-        uint64_t n_ptm_edges_rhs = num_ptm_edges (rhs);
-        // Size of total order factor (num ptm pairs plus num regular edges)
-        uint64_t size_lhs = (n_ptm_edges_lhs / 2) + (lhs . size () - n_ptm_edges_lhs);
-        uint64_t size_rhs = (n_ptm_edges_rhs / 2) + (rhs . size () - n_ptm_edges_rhs);
-        if ( size_lhs < size_rhs )
-          return true;
-        if ( size_rhs < size_lhs )
-          return false;
-        // if ( num_ptm_edges ( lhs ) < num_ptm_edges ( rhs ) )
-        //   return true;
-        // if ( num_ptm_edges ( rhs ) < num_ptm_edges ( lhs ) )
-        //   return false;
-      }
-      // Next compare factors by size
-      if ( lhs . size () < rhs . size () ) return true;
-      if ( lhs . size () > rhs . size () ) return false;
+      // Compare factors by reverse ptm sizes
+      if ( n_ptm_edges_lhs < n_ptm_edges_rhs )
+        return false;
+      if ( n_ptm_edges_rhs < n_ptm_edges_lhs )
+        return true;
       // Compare edge tuples by source (first entry)
       auto cmp_edges = [](auto const& e1, auto const& e2) {
         return std::get<0>(e1) < std::get<0>(e2);
@@ -619,7 +604,7 @@ _parse ( std::vector<std::string> const& lines ) {
       uint64_t max_rhs = std::get<0>(edge_max_rhs);
       if ( max_lhs < max_rhs ) return true;
       if ( max_lhs > max_rhs ) return false;
-      // Return false if same size and same max
+      // Return false if everything is the same
       return false;
     };
 
