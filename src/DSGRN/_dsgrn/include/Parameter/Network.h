@@ -3,7 +3,7 @@
 /// 2015-05-22
 ///
 /// Marcio Gameiro
-/// 2023-09-30
+/// 2024-12-01
 
 #pragma once
 
@@ -75,6 +75,11 @@ public:
   bool
   essential ( uint64_t index ) const;
 
+  /// parameter_type
+  ///   Return parameter type: DSGRN (D), Boolean (B), Multi-Boolean (M)
+  char
+  parameter_type ( uint64_t index ) const;
+
   /// interaction
   ///   Return the interaction type of an edge:
   ///   False for repression, true for activation
@@ -142,6 +147,7 @@ struct Network_ {
   std::unordered_map<std::pair<uint64_t,uint64_t>, uint64_t, dsgrn::hash<std::pair<uint64_t,uint64_t>>> order_;
   std::vector<std::vector<std::vector<uint64_t>>> logic_by_index_;
   std::vector<uint64_t> num_thresholds_; // Number of thresholds
+  std::vector<char> parameter_type_; // DSGRN (D), Boolean (B), Multi-Boolean (M)
   std::vector<bool> essential_;
   std::string specification_;
   bool pos_edge_blowup_ = false; // Blowup positive self-edges if true
@@ -168,6 +174,7 @@ NetworkBinding (py::module &m) {
     .def("outputs", &Network::outputs)
     .def("logic", &Network::logic)
     .def("essential", &Network::essential)
+    .def("parameter_type", &Network::parameter_type)
     .def("interaction", &Network::interaction)
     .def("pos_edge_blowup", &Network::pos_edge_blowup)
     .def("neg_edge_blowup", &Network::neg_edge_blowup)

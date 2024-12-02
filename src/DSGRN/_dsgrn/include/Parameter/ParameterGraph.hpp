@@ -3,7 +3,7 @@
 /// 2015-05-24
 ///
 /// Marcio Gameiro
-/// 2021-01-30
+/// 2024-12-01
 
 #pragma once
 
@@ -41,7 +41,13 @@ assign ( Network const& network ) {
     std::vector<std::vector<uint64_t>> const& logic_struct = data_ -> network_ . logic ( d );
     std::stringstream ss;
     ss << path << "/" << n <<  "_" << m;
-    for ( auto const& p : logic_struct ) ss <<  "_" << p.size();
+    if ( data_ -> network_ . parameter_type ( d ) == 'D' ) {        // If DSGRN (D) parameter
+      for ( auto const& p : logic_struct ) ss <<  "_" << p.size();
+    } else if ( data_ -> network_ . parameter_type ( d ) == 'B' ) { // If Boolean (B) parameter
+      ss <<  "_B";
+    } else { // Multi-Boolean (M) parameter
+      ss <<  "_MB";
+    }
     if ( data_ -> network_ . essential ( d ) ) ss << "_E";
     ss << ".dat";
     //std::cout << "Acquiring logic data in " << ss.str() << "\n";

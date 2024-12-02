@@ -3,7 +3,7 @@
 /// 2015-05-22
 ///
 /// Marcio Gameiro
-/// 2023-09-30
+/// 2024-12-01
 
 #pragma once
 
@@ -110,6 +110,11 @@ logic ( uint64_t index ) const {
 INLINE_IF_HEADER_ONLY bool Network::
 essential ( uint64_t index ) const {
   return data_ -> essential_ [ index ];
+}
+
+INLINE_IF_HEADER_ONLY char Network::
+parameter_type ( uint64_t index ) const {
+  return data_ -> parameter_type_ [ index ];
 }
 
 INLINE_IF_HEADER_ONLY bool Network::
@@ -230,6 +235,7 @@ _parse ( std::vector<std::string> const& lines ) {
   using namespace DSGRN_parse_tools;
   std::vector<std::string> logic_strings;
   std::map<std::string, bool> essential_nodes;
+  std::map<std::string, char> nodes_parameter_type;
   //std::vector<std::string> constraint_strings;
   // Learn the node names
   for ( auto const& line : lines ) {
@@ -248,20 +254,45 @@ _parse ( std::vector<std::string> const& lines ) {
       logic_strings . push_back ( splitline[1] );
     }
     //std::cout << line << " has " << splitline.size() << " parts.\n";
+    // Default is non-essential and DSGRN (D) parameter
+    essential_nodes [ splitline[0] ] = false;
+    nodes_parameter_type [ splitline[0] ] = 'D';
     if ( splitline . size () >= 3 ) {
-      // TODO: make it check for keyword "essential"
-      essential_nodes [ splitline[0] ] = true;
-      //std::cout << "Marking " << splitline[0] << " as essential \n";
-    } else {
-      essential_nodes [ splitline[0] ] = false;
+      // Check if essential, Boolean, or multi-Boolean parameter
+      removeSpace(splitline[2]);
+      for ( char c : splitline[2] ) {
+        if ( (c != 'E') && (c != 'B') && (c != 'M') ) {
+          throw std::runtime_error ( "Problem parsing network specification file: Invalid parameter type" );
+        }
+        if ( c == 'E' ) {
+          essential_nodes [ splitline[0] ] = true;
+          //std::cout << "Marking " << splitline[0] << " as essential \n";
+        }
+        if ( c == 'B' ) {
+          if ( nodes_parameter_type [ splitline[0] ] == 'D' ) {
+            nodes_parameter_type [ splitline[0] ] = 'B';
+          } else {
+            throw std::runtime_error ( "Problem parsing network specification file: Multiple parameter types" );
+          }
+        }
+        if ( c == 'M' ) {
+          if ( nodes_parameter_type [ splitline[0] ] == 'D' ) {
+          nodes_parameter_type [ splitline[0] ] = 'M';
+          } else {
+            throw std::runtime_error ( "Problem parsing network specification file: Multiple parameter types" );
+          }
+        }
+      }
     }
   }
   // Index the node names
   uint64_t loop_index = 0;
   data_ -> essential_ . resize ( essential_nodes . size () );
-  for ( auto const& name : data_ ->  name_by_index_ ) { 
-    data_ -> index_by_name_ [ name ] = loop_index; 
+  data_ -> parameter_type_ . resize ( nodes_parameter_type . size () );
+  for ( auto const& name : data_ -> name_by_index_ ) {
+    data_ -> index_by_name_ [ name ] = loop_index;
     data_ -> essential_ [ loop_index ] = essential_nodes [ name ];
+    data_ -> parameter_type_ [ loop_index ] = nodes_parameter_type [ name ];
     ++ loop_index;
   }
   // Learn the logics
@@ -292,7 +323,7 @@ _parse ( std::vector<std::string> const& lines ) {
       //std::cout << "  Flushing token " << token << "\n";
       if ( data_ -> index_by_name_ . count ( token ) == 0 ) {
         throw std::runtime_error ( "Problem parsing network specification file: " 
-                                   " Invalid input variable " + token );
+                                   "Invalid input variable " + token );
       }
       uint64_t source = data_ ->  index_by_name_ [ token ];
       factor . push_back ( source );

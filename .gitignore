@@ -5,6 +5,11 @@ bin
 build*
 software/WebCLI/libs
 
+# Binaries directories
+dist
+*.egg-info
+__pycache__
+
 # Session files
 dsgrn.session
 
