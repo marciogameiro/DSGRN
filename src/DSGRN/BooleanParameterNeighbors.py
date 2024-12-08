@@ -15,9 +15,9 @@ def boolean_network_spec(parameter_graph):
     boolean_node = lambda spec: spec.count(':') == 2 and 'B' in spec.split(':')[2]
     # Make all nodes Boolean
     bool_nodes_spec = [spec if boolean_node(spec) else spec + ('' if spec.count(':') == 2 else ' : ') + 'B' for spec in nodes_spec]
-    # Get the essential network spec
-    ess_net_spec = '\n'.join(ess_nodes_spec)
-    return ess_net_spec
+    # Get the Boolean network spec
+    bool_net_spec = '\n'.join(bool_nodes_spec)
+    return bool_net_spec
 
 def boolean_parameters(parameter_graph):
     """Returns list of Boolean parameters in the parameter graph"""
