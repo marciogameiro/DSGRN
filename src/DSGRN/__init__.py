@@ -30,6 +30,8 @@ from DSGRN.ParameterPartialOrders import *
 from DSGRN.ParameterFromSample import *
 from DSGRN.SaveDatabaseJSON import *
 from DSGRN.EquilibriumCells import *
+from DSGRN.MorseGraphIsomorphism import *
+
 import sys
 import os
 import pickle
