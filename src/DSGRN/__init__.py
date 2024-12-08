@@ -1,6 +1,6 @@
 ### __init__.py
 ### MIT LICENSE 2018 Shaun Harker
-### MIT LICENSE 2021 Marcio Gameiro
+### MIT LICENSE 2024 Marcio Gameiro
 
 from DSGRN._dsgrn import *
 from DSGRN.SubdomainGraph import *
@@ -25,6 +25,7 @@ from DSGRN.Query.Logging import *
 from DSGRN.Query.StableFCQuery import *
 from DSGRN.Query.ComputeSingleGeneQuery import *
 from DSGRN.EssentialParameterNeighbors import *
+from DSGRN.BooleanParameterNeighbors import *
 from DSGRN.ParameterPartialOrders import *
 from DSGRN.ParameterFromSample import *
 from DSGRN.SaveDatabaseJSON import *
