@@ -2,8 +2,10 @@
 # Marcio Gameiro
 # 2020-09-18
 # MIT LICENSE
+#
+# 2024-12-08
 
-from DSGRN import *
+import DSGRN
 
 def essential_network_spec(parameter_graph):
     """Returns the essential network specification"""
@@ -14,9 +16,10 @@ def essential_network_spec(parameter_graph):
     # Number of specs should equal number of nodes
     assert len(nodes_spec) == parameter_graph.dimension()
     # Check if a node spec correspond to an essential node
-    essential_node = lambda spec: spec.strip().endswith('E') and spec.count(':') == 2
+    essential_node = lambda spec: spec.count(':') == 2 and 'E' in spec.split(':')[2]
+    # essential_node = lambda spec: spec.strip().endswith('E') and spec.count(':') == 2
     # Make all nodes essential
-    ess_nodes_spec = [spec if essential_node(spec) else spec + ' : E' for spec in nodes_spec]
+    ess_nodes_spec = [spec if essential_node(spec) else spec + ('' if spec.count(':') == 2 else ' : ') + 'E' for spec in nodes_spec]
     # Get the essential network spec
     ess_net_spec = '\n'.join(ess_nodes_spec)
     return ess_net_spec
@@ -26,8 +29,8 @@ def essential_parameters(parameter_graph):
     # Get the essential network spec
     ess_net_spec = essential_network_spec(parameter_graph)
     # Construct essential network and its parameter graph
-    ess_network = Network(ess_net_spec)
-    ess_parameter_graph = ParameterGraph(ess_network)
+    ess_network = DSGRN.Network(ess_net_spec)
+    ess_parameter_graph = DSGRN.ParameterGraph(ess_network)
     # Get list of indices of essential parameters embedded
     # in the parameter graph of the original network
     ess_parameters = [] # Essential parameter indices
