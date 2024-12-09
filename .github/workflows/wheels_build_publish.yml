@@ -24,19 +24,19 @@ jobs:
       matrix:
         include:
           - { os: ubuntu-latest,  cibw_archs: x86_64,   cibw_build: 'cp*-manylinux*' }
-          - { os: ubuntu-latest,  cibw_archs: x86_64,   cibw_build: 'cp*-musllinux*' }
-          - { os: ubuntu-latest,  cibw_archs: x86_64,   cibw_build: 'pp*'            }
+          # - { os: ubuntu-latest,  cibw_archs: x86_64,   cibw_build: 'cp*-musllinux*' }
+          # - { os: ubuntu-latest,  cibw_archs: x86_64,   cibw_build: 'pp*'            }
           - { os: ubuntu-latest,  cibw_archs: aarch64,  cibw_build: 'cp*-manylinux*' }
-          - { os: ubuntu-latest,  cibw_archs: aarch64,  cibw_build: 'cp*-musllinux*' }
-          - { os: ubuntu-latest,  cibw_archs: aarch64,  cibw_build: 'pp*'            }
+          # - { os: ubuntu-latest,  cibw_archs: aarch64,  cibw_build: 'cp*-musllinux*' }
+          # - { os: ubuntu-latest,  cibw_archs: aarch64,  cibw_build: 'pp*'            }
           - { os: ubuntu-latest,  cibw_archs: i686,     cibw_build: 'cp*-manylinux*' }
-          - { os: ubuntu-latest,  cibw_archs: i686,     cibw_build: 'cp*-musllinux*' }
-          - { os: ubuntu-latest,  cibw_archs: i686,     cibw_build: 'pp*'            }
+          # - { os: ubuntu-latest,  cibw_archs: i686,     cibw_build: 'cp*-musllinux*' }
+          # - { os: ubuntu-latest,  cibw_archs: i686,     cibw_build: 'pp*'            }
           - { os: macos-latest,   cibw_archs: x86_64,   cibw_build: 'cp*'            }
           - { os: macos-latest,   cibw_archs: x86_64,   cibw_build: 'pp*'            }
           - { os: macos-latest,   cibw_archs: arm64,    cibw_build: 'cp*'            }
           - { os: windows-latest, cibw_archs: AMD64,    cibw_build: 'cp*'            }
-          - { os: windows-latest, cibw_archs: AMD64,    cibw_build: 'pp*'            }
+          # - { os: windows-latest, cibw_archs: AMD64,    cibw_build: 'pp*'            }
           - { os: windows-latest, cibw_archs: x86,      cibw_build: 'cp*'            }
           # Building wheels not working for Windows ARM64
           # - { os: windows-latest, cibw_archs: ARM64,    cibw_build: 'cp*'            }
