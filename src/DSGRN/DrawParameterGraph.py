@@ -2,7 +2,7 @@
 ### MIT LICENSE 2020 Marcio Gameiro
 #
 # Marcio Gameiro
-# 2024-12-08
+# 2024-12-09
 
 import DSGRN
 from collections import defaultdict
@@ -197,7 +197,7 @@ def draw_factor_graph(parameter_graph, node_index, node_color='lightblue',
 
 def draw_parameter_graph(parameter_graph, vertices=None, node_color='lightblue', ess_node_color='red',
                          node_colors=None, node_classes=None, cmap=None, clist=None, node_shapes=None,
-                         node_size=None):
+                         node_size=None, adj_type='codim1'):
     """Draw parameter graph using graphviz"""
 
     def vert_color(v):
@@ -245,7 +245,7 @@ def draw_parameter_graph(parameter_graph, vertices=None, node_color='lightblue',
     # Get list of essential parameter indices
     ess_vertices = DSGRN.essential_parameters(parameter_graph)
     # Get list of edges (require u < v so we don't add double edges)
-    edges = [(u, v) for u in vertices for v in parameter_graph.adjacencies(u) if u < v and v in vertices]
+    edges = [(u, v) for u in vertices for v in parameter_graph.adjacencies(u, type=adj_type) if u < v and v in vertices]
     # Create a vertex name dictionary
     vertex_name = {v: str(v) for v in vertices}
     # Create a vertex label dictionary
@@ -273,7 +273,7 @@ def draw_parameter_graph(parameter_graph, vertices=None, node_color='lightblue',
 
 def draw_parameter_graph_nx(parameter_graph, vertices=None, node_color='lightblue', ess_node_color='red',
                             node_colors=None, node_classes=None, cmap=None, clist=None, node_shape='o',
-                            layout='spring', node_size=None, fig_w=10, fig_h=10):
+                            layout='spring', node_size=None, adj_type='codim1', fig_w=10, fig_h=10):
     """Draw parameter graph using networkx"""
 
     def vert_color(v):
@@ -317,7 +317,7 @@ def draw_parameter_graph_nx(parameter_graph, vertices=None, node_color='lightblu
     # Get list of essential parameter indices
     ess_vertices = DSGRN.essential_parameters(parameter_graph)
     # Get list of edges (require u < v so don't add double edges)
-    edges = [(u, v) for u in vertices for v in parameter_graph.adjacencies(u) if u < v and v in vertices]
+    edges = [(u, v) for u in vertices for v in parameter_graph.adjacencies(u, type=adj_type) if u < v and v in vertices]
     # Create a vertex label dictionary
     vertex_label = {v: str(v) for v in vertices}
     # Create a vertex color dictionary
