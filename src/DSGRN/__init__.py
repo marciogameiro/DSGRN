@@ -32,7 +32,6 @@ from DSGRN.SaveDatabaseJSON import *
 from DSGRN.EquilibriumCells import *
 from DSGRN.MorseGraphIsomorphism import *
 from DSGRN.DrawParameterGraph import *
-from DSGRN.IsomorphismQuery import *
 
 import sys
 import os
