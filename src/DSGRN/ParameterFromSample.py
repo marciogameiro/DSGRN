@@ -76,12 +76,13 @@ def nodeRegion(logic, samples, thetas):
     if len(np.unique(tempVals)) != len(tempVals):
         return None
     rthetas = thetas.copy()[::-1]
-    tempOrd = np.argsort(tempVals+rthetas)
+    tempOrd = np.argsort(tempVals + rthetas)
     for i in range(len(tempOrd)):
         if tempOrd[i] >= len(tempVals):
             tempOrd[i] -= len(tempOrd)
-    tempOrd = str(list(binSort(tempOrd)))
-    return eval(tempOrd)
+    # Convert to a list of ints
+    tempOrd = list(map(int, tempOrd))
+    return tempOrd
 
 def par_index_from_sample_old(parameter_graph, L, U, T):
     network = parameter_graph.network()
