@@ -61,7 +61,7 @@ jobs:
           python-version: '3.x'
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.23.2
+        uses: pypa/cibuildwheel@v2.23.3
         env:
           # Python versions to skip
           CIBW_SKIP: cp36-* cp37-* cp38-*
