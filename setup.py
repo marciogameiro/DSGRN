@@ -95,7 +95,7 @@ setup(
     package_dir = {'': 'src'},
     ext_package='DSGRN',
     ext_modules=[CMakeExtension('_dsgrn')],
-    packages=['DSGRN'],
+    packages=['DSGRN', 'DSGRN.Query'],
     entry_points={'console_scripts': ['Signatures=DSGRN.Signatures:main [MPI]']},
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
