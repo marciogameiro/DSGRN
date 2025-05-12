@@ -65,6 +65,7 @@ jobs:
         env:
           # Python versions to skip
           CIBW_SKIP: cp36-* cp37-* cp38-*
+          CIBW_ENABLE: pypy
           CIBW_BUILD: ${{ matrix.cibw_build }}
           CIBW_ARCHS: ${{ matrix.cibw_archs }}
           CIBW_BEFORE_BUILD_WINDOWS: pip install delvewheel

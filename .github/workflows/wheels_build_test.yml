@@ -57,6 +57,7 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.23.3
         env:
+          CIBW_ENABLE: pypy
           CIBW_BUILD: ${{ matrix.python }}-*
           CIBW_ARCHS: ${{ matrix.buildplat[1] }}
           CIBW_BEFORE_BUILD_WINDOWS: pip install delvewheel
