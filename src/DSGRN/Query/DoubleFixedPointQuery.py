@@ -2,8 +2,8 @@
 # MIT LICENSE 2016
 # Shaun Harker
 
-from DSGRN.Query.Logging import LogToSTDOUT
-from DSGRN.Query.FixedPointTables import *
+from dsgrn.Query.Logging import LogToSTDOUT
+from dsgrn.Query.FixedPointTables import *
 
 class DoubleFixedPointQuery:
   def __init__ (self, database, bounds1, bounds2):

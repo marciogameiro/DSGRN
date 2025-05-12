@@ -18,13 +18,13 @@ which can then be queried for further research.
 To get the latest tagged version from the PyPI repository:
 
 ```bash
-pip install DSGRN
+pip install dsgrn
 ```
 
 To uninstall:
 
 ```bash
-pip uninstall DSGRN
+pip uninstall dsgrn
 ```
 
 ## Installing from source
@@ -46,10 +46,10 @@ If you don't have all the dependencies installed or if the above fails, see [Ins
 To check if DSGRN is installed do
 
 ```python,test
-import DSGRN
+import dsgrn
 
-network = DSGRN.Network("X1 : (~X1)(X2)\n X2 : (X1)(~X2)")
-DSGRN.DrawGraph(network)
+network = dsgrn.Network("X1 : (~X1)(X2)\n X2 : (X1)(~X2)")
+dsgrn.DrawGraph(network)
 ```
 
 This should plot the network

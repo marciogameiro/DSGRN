@@ -7,7 +7,7 @@
 #   DoubleFixedPointQuery.py
 # in order to create SQL tables to support their queries.
 
-from DSGRN.Query.Logging import LogToSTDOUT
+from dsgrn.Query.Logging import LogToSTDOUT
 
 def FPString(i, j, database):
   terms = [ "_" for k in range(0, database.D) ]

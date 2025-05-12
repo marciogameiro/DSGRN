@@ -3,7 +3,7 @@
 # MIT LICENSE
 # 2021-10-14
 
-import DSGRN
+import dsgrn
 import numpy as np
 import json
 
@@ -111,15 +111,15 @@ def par_index_from_sample_old(parameter_graph, L, U, T):
         # Get thresholds permutation (order parameter)
         order = [p + n_outputs for p in thres]
         # Get order parameter
-        order_parameters.append(DSGRN.OrderParameter(order))
+        order_parameters.append(dsgrn.OrderParameter(order))
         # Add sorted thresholds (in increasing order) to partial order
         part_order = [thres.index(p) - n_outputs if p < 0 else p for p in node_region]
         # Get hex code from partial order
         hex_code = partial2hex(part_order, n_inputs, n_outputs)
         # Get logic parameter
-        logic_parameters.append(DSGRN.LogicParameter(n_inputs, n_outputs, hex_code))
+        logic_parameters.append(dsgrn.LogicParameter(n_inputs, n_outputs, hex_code))
     # Get DSGRN parameter
-    parameter = DSGRN.Parameter(logic_parameters, order_parameters, network)
+    parameter = dsgrn.Parameter(logic_parameters, order_parameters, network)
     # Get parameter index from parameter graph
     par_index = parameter_graph.index(parameter)
     # Return parameter index if valid, else return -1
@@ -150,15 +150,15 @@ def index_from_partial_orders(parameter_graph, partial_orders):
         # Get thresholds permutation (order parameter)
         order = [p + n_outputs for p in thres]
         # Get order parameter
-        order_parameters.append(DSGRN.OrderParameter(order))
+        order_parameters.append(dsgrn.OrderParameter(order))
         # Add sorted thresholds (in increasing order) to partial order
         partial_order = [thres.index(p) - n_outputs if p < 0 else p for p in part_order]
         # Get hex code from partial order
         hex_code = partial2hex(partial_order, n_inputs, n_outputs)
         # Get logic parameter
-        logic_parameters.append(DSGRN.LogicParameter(n_inputs, n_outputs, hex_code))
+        logic_parameters.append(dsgrn.LogicParameter(n_inputs, n_outputs, hex_code))
     # Get DSGRN parameter
-    parameter = DSGRN.Parameter(logic_parameters, order_parameters, network)
+    parameter = dsgrn.Parameter(logic_parameters, order_parameters, network)
     # Get parameter index from parameter graph
     par_index = parameter_graph.index(parameter)
     # Return parameter index if valid, else return -1

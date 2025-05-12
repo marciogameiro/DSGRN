@@ -85,7 +85,7 @@ with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='DSGRN',
+    name='dsgrn',
     version='1.7.4',
     author='Marcio Gameiro',
     author_email='marciogameiro@gmail.com',
@@ -93,10 +93,10 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     package_dir = {'': 'src'},
-    ext_package='DSGRN',
+    ext_package='dsgrn',
     ext_modules=[CMakeExtension('_dsgrn')],
-    packages=['DSGRN', 'DSGRN.Query'],
-    entry_points={'console_scripts': ['Signatures=DSGRN.Signatures:main [MPI]']},
+    packages=['dsgrn'],
+    entry_points={'console_scripts': ['Signatures=dsgrn.Signatures:main [MPI]']},
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
     url = 'https://github.com/marciogameiro/DSGRN',

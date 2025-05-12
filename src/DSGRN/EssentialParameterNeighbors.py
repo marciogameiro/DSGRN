@@ -5,7 +5,7 @@
 #
 # 2024-12-08
 
-import DSGRN
+import dsgrn
 
 def essential_network_spec(parameter_graph):
     """Returns the essential network specification"""
@@ -29,8 +29,8 @@ def essential_parameters(parameter_graph):
     # Get the essential network spec
     ess_net_spec = essential_network_spec(parameter_graph)
     # Construct essential network and its parameter graph
-    ess_network = DSGRN.Network(ess_net_spec)
-    ess_parameter_graph = DSGRN.ParameterGraph(ess_network)
+    ess_network = dsgrn.Network(ess_net_spec)
+    ess_parameter_graph = dsgrn.ParameterGraph(ess_network)
     # Get list of indices of essential parameters embedded
     # in the parameter graph of the original network
     ess_parameters = [] # Essential parameter indices

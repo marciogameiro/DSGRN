@@ -2,7 +2,7 @@
 
 from mpi4py import MPI
 from mpi4py.futures import MPICommExecutor
-from DSGRN import *
+from dsgrn import *
 import sqlite3, sys, time
 import progressbar # pip install progressbar2
 

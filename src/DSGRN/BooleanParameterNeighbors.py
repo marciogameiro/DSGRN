@@ -1,7 +1,7 @@
 # BooleanParameterNeighbors.py
 ### MIT LICENSE 2024 Marcio Gameiro
 
-import DSGRN
+import dsgrn
 
 def boolean_network_spec(parameter_graph):
     """Returns the Boolean network specification"""
@@ -24,8 +24,8 @@ def boolean_parameters(parameter_graph):
     # Get the Boolean network spec
     bool_net_spec = boolean_network_spec(parameter_graph)
     # Construct Boolean network and its parameter graph
-    bool_network = DSGRN.Network(bool_net_spec)
-    bool_parameter_graph = DSGRN.ParameterGraph(bool_network)
+    bool_network = dsgrn.Network(bool_net_spec)
+    bool_parameter_graph = dsgrn.ParameterGraph(bool_network)
     # Get list of indices of Boolean parameters embedded
     # in the parameter graph of the original network
     bool_parameters = [] # Boolean parameter indices

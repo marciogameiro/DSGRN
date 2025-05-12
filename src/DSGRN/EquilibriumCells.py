@@ -3,7 +3,7 @@
 # MIT LICENSE
 # 2024-05-21
 
-import DSGRN
+import dsgrn
 import pychomp
 
 __all__ = ['EquilibriumCells']
@@ -20,13 +20,13 @@ def EquilibriumCells(parameter, eqtype='all', eqformat='coords'):
     if eqformat not in eqformat_vals:
         raise ValueError(f"Invalid value '{eqformat}' for eqformat. Supported values are: {', '.join(map(repr,eqformat_vals))}.")
     # Get the parameter index in the original parameter graph
-    original_par_graph = DSGRN.ParameterGraph(parameter.network())
+    original_par_graph = dsgrn.ParameterGraph(parameter.network())
     par_index = original_par_graph.index(parameter)
     # Redefine network without self edges blowup
     net_spec = parameter.network().specification()
-    network = DSGRN.Network(net_spec, edge_blowup='none')
+    network = dsgrn.Network(net_spec, edge_blowup='none')
     # Get the parameter in the new parameter graph
-    parameter_graph = DSGRN.ParameterGraph(network)
+    parameter_graph = dsgrn.ParameterGraph(network)
     parameter = parameter_graph.parameter(par_index)
     D = network.size()
     limits = [len(network.outputs(d)) + 1 for d in range(D)]

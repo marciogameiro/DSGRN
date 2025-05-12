@@ -1,9 +1,9 @@
 import sqlite3
 import graphviz
-from DSGRN._dsgrn import *
+from dsgrn._dsgrn import *
 from functools import reduce
 
-from DSGRN.Query.Logging import LogToSTDOUT
+from dsgrn.Query.Logging import LogToSTDOUT
 
 class Database:
   def __init__(self, database_name):

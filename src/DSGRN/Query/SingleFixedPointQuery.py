@@ -2,8 +2,8 @@
 # MIT LICENSE 2016
 # Shaun Harker
 
-from DSGRN.Query.FixedPointTables import *
-from DSGRN.Query.Logging import LogToSTDOUT
+from dsgrn.Query.FixedPointTables import *
+from dsgrn.Query.Logging import LogToSTDOUT
 
 class SingleFixedPointQuery:
   def __init__ (self, database, bounds):

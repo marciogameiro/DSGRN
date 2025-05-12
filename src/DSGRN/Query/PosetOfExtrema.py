@@ -5,7 +5,7 @@
 # Marcio Gameiro
 # 2021-08-04
 
-from DSGRN._dsgrn import *
+from dsgrn._dsgrn import *
 
 class PosetOfExtrema(Pattern):
   def __init__(self, network, events, orderings):

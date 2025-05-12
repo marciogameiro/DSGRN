@@ -4,7 +4,7 @@
 # Marcio Gameiro
 # 2024-12-09
 
-import DSGRN
+import dsgrn
 from collections import defaultdict
 import matplotlib.pyplot as plt
 import matplotlib
@@ -20,19 +20,19 @@ def logic_factor_graph(parameter_graph, node_index):
     # Get list of vertices
     vertices = list(range(len(hex_codes)))
     # Get the essential network spec
-    ess_net_spec = DSGRN.essential_network_spec(parameter_graph)
+    ess_net_spec = dsgrn.essential_network_spec(parameter_graph)
     # Construct essential network and its parameter graph
-    ess_network = DSGRN.Network(ess_net_spec)
-    ess_parameter_graph = DSGRN.ParameterGraph(ess_network)
+    ess_network = dsgrn.Network(ess_net_spec)
+    ess_parameter_graph = dsgrn.ParameterGraph(ess_network)
     # Get list of essential hex codes and their indices
     ess_hex_codes = ess_parameter_graph.factorgraph(node_index)
     ess_vertices = [v for v in vertices if hex_codes[v] in ess_hex_codes]
     # Alternative way to get essential hex code indices
     # n = len(parameter_graph.network().inputs(node_index))
     # m = len(parameter_graph.network().outputs(node_index))
-    # ess_vertices = [v for v in vertices if DSGRN.essential(hex_codes[v], n, m)]
+    # ess_vertices = [v for v in vertices if dsgrn.essential(hex_codes[v], n, m)]
     # Function to check if two hex codes are adjacent
-    adjacent = lambda u, v: DSGRN.isAdjacentHexcode(hex_codes[u], hex_codes[v])
+    adjacent = lambda u, v: dsgrn.isAdjacentHexcode(hex_codes[u], hex_codes[v])
     # Get list of edges (the adjacency check enforces that u < v)
     edges = [(u, v) for u in vertices for v in vertices if adjacent(u, v)]
     return vertices, edges, ess_vertices, hex_codes
@@ -42,7 +42,7 @@ def order_factor_graph(parameter_graph, node_index):
     # Get list of order parameters
     m = len(parameter_graph.network().outputs(node_index))
     order_size = parameter_graph.ordersize(node_index)
-    order_params = [DSGRN.OrderParameter(m, k) for k in range(order_size)]
+    order_params = [dsgrn.OrderParameter(m, k) for k in range(order_size)]
     # Get list of vertices
     vertices = list(range(len(order_params)))
     # Function to check if two order parameters are adjacent
@@ -243,7 +243,7 @@ def draw_parameter_graph(parameter_graph, vertices=None, node_color='lightblue',
     if vertices == None:
         vertices = list(range(parameter_graph.size()))
     # Get list of essential parameter indices
-    ess_vertices = DSGRN.essential_parameters(parameter_graph)
+    ess_vertices = dsgrn.essential_parameters(parameter_graph)
     # Get list of edges (require u < v so we don't add double edges)
     edges = [(u, v) for u in vertices for v in parameter_graph.adjacencies(u, type=adj_type) if u < v and v in vertices]
     # Create a vertex name dictionary
@@ -315,7 +315,7 @@ def draw_parameter_graph_nx(parameter_graph, vertices=None, node_color='lightblu
     if node_size == None:
         node_size = 900
     # Get list of essential parameter indices
-    ess_vertices = DSGRN.essential_parameters(parameter_graph)
+    ess_vertices = dsgrn.essential_parameters(parameter_graph)
     # Get list of edges (require u < v so don't add double edges)
     edges = [(u, v) for u in vertices for v in parameter_graph.adjacencies(u, type=adj_type) if u < v and v in vertices]
     # Create a vertex label dictionary

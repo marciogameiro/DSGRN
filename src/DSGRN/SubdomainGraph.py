@@ -10,7 +10,7 @@ from pychomp import *
 import datetime
 from itertools import product
 from math import log2
-from DSGRN._dsgrn import *
+from dsgrn._dsgrn import *
 
 class SubdomainGraph:
 

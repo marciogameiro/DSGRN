@@ -12,7 +12,7 @@ import operator
 import functools
 from itertools import product
 from math import log2
-from DSGRN._dsgrn import *
+from dsgrn._dsgrn import *
 
 class BlowupGraph:
 

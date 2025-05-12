@@ -3,7 +3,7 @@
 # MIT LICENSE
 # 2021-07-11
 
-import DSGRN
+import dsgrn
 import pychomp
 import itertools
 import json
@@ -212,7 +212,7 @@ def morse_sets_json(network, morse_graph, morse_decomposition):
 def equilibrium_cells_json(parameter, morse_sets_data):
     """Return json data for Equilibrium cells."""
     # Get indices of all equilibrium cells
-    eq_cells = DSGRN.EquilibriumCells(parameter, 'all', 'index')
+    eq_cells = dsgrn.EquilibriumCells(parameter, 'all', 'index')
     # Get Morse cells from the Morse sets
     morse_cells = [cell for morse_set in morse_sets_data for cell in morse_set["cells"]]
     # Get equilibrium cells that are not part of a Morse set
@@ -238,7 +238,7 @@ def DatabaseJSON(network, param_indices=None, verts_colors=None, eq_cells=False,
     if network.size() not in [2, 3]:
         print('Only available for dimensions 2 and 3!')
         return
-    parameter_graph = DSGRN.ParameterGraph(network)
+    parameter_graph = dsgrn.ParameterGraph(network)
     # Use all parameter indices if None
     if param_indices == None:
         param_indices = range(parameter_graph.size())
@@ -249,9 +249,9 @@ def DatabaseJSON(network, param_indices=None, verts_colors=None, eq_cells=False,
     for par_index in param_indices:
         # Compute DSGRN dynamics
         parameter = parameter_graph.parameter(par_index)
-        domain_graph = DSGRN.DomainGraph(parameter)
-        morse_decomposition = DSGRN.MorseDecomposition(domain_graph.digraph())
-        morse_graph = DSGRN.MorseGraph(domain_graph, morse_decomposition)
+        domain_graph = dsgrn.DomainGraph(parameter)
+        morse_decomposition = dsgrn.MorseDecomposition(domain_graph.digraph())
+        morse_graph = dsgrn.MorseGraph(domain_graph, morse_decomposition)
         morse_graph_json_data = morse_graph_json(morse_graph)
         morse_sets_json_data = morse_sets_json(network, morse_graph, morse_decomposition)
         stg_json_data = state_transition_graph_json(network, domain_graph)

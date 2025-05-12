@@ -139,7 +139,7 @@ On an HPC clusster you could also install Anaconda locally on your account and u
 
 ## Uninstalling
 
-    pip uninstall DSGRN
+    pip uninstall dsgrn
 
 <!--
 ### Latest Stable Version
@@ -244,9 +244,8 @@ Possible fixes include steps such as
 In python, type
 
 ```python
-import DSGRN
-print(DSGRN.__name__)
+import dsgrn
+print(dsgrn.__name__)
 ```
 
 This will tell you the path to the DSGRN the python module loader used, and you can check if it is correct.
-

@@ -3,7 +3,7 @@
 # 2020-10-08
 # MIT LICENSE
 
-import DSGRN
+import dsgrn
 import numpy as np
 
 def hex2partial(hex_code, n_inputs, n_outputs):

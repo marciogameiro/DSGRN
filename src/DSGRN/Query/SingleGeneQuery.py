@@ -5,9 +5,9 @@
 # Marcio Gameiro
 # 2021-03-26
 
-from DSGRN.Query.Graph import *
-from DSGRN.Query.Hexcodes import *
-from DSGRN.Query.Logging import LogToSTDOUT
+from dsgrn.Query.Graph import *
+from dsgrn.Query.Hexcodes import *
+from dsgrn.Query.Logging import LogToSTDOUT
 
 class SingleGeneQuery:
   def __init__(self, database, gene):
