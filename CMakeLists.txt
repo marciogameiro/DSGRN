@@ -24,4 +24,4 @@ link_directories (
 
 message("USER INCLUDE PATH IS ${USER_INCLUDE_PATH}")
 
-pybind11_add_module(_dsgrn src/DSGRN/_dsgrn/DSGRN.cpp)
+pybind11_add_module(_dsgrn src/dsgrn/_dsgrn/DSGRN.cpp)

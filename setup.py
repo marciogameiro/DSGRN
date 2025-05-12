@@ -39,7 +39,7 @@ class CMakeBuild(build_ext):
             "-DPYTHON_EXECUTABLE={}".format(sys.executable),
             "-DEXAMPLE_VERSION_INFO={}".format(self.distribution.get_version()),
             "-DCMAKE_BUILD_TYPE={}".format(cfg),  # Not used on MSVC
-            "-DUSER_INCLUDE_PATH=./src/DSGRN/_dsgrn/include"
+            "-DUSER_INCLUDE_PATH=./src/dsgrn/_dsgrn/include"
         ]
 
         build_args = ['--config', cfg]
@@ -95,7 +95,7 @@ setup(
     package_dir = {'': 'src'},
     ext_package='dsgrn',
     ext_modules=[CMakeExtension('_dsgrn')],
-    packages=['dsgrn'],
+    packages=['dsgrn', 'dsgrn.Query'],
     entry_points={'console_scripts': ['Signatures=dsgrn.Signatures:main [MPI]']},
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
