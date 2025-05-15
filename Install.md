@@ -139,7 +139,7 @@ On an HPC clusster you could also install Anaconda locally on your account and u
 
 ## Uninstalling
 
-    pip uninstall dsgrn
+    pip uninstall DSGRN
 
 <!--
 ### Latest Stable Version
@@ -147,13 +147,13 @@ On an HPC clusster you could also install Anaconda locally on your account and u
 To get the latest tagged version from the PyPi repository:
 
 ```bash
-pip install dsgrn
+pip install DSGRN
 ```
 
 To uninstall:
 
 ```bash
-pip uninstall dsgrn
+pip uninstall DSGRN
 ```
 -->
 
@@ -244,8 +244,8 @@ Possible fixes include steps such as
 In python, type
 
 ```python
-import dsgrn
-print(dsgrn.__name__)
+import DSGRN
+print(DSGRN.__name__)
 ```
 
 This will tell you the path to the DSGRN the python module loader used, and you can check if it is correct.

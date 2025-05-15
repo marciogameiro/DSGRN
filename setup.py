@@ -39,7 +39,7 @@ class CMakeBuild(build_ext):
             "-DPYTHON_EXECUTABLE={}".format(sys.executable),
             "-DEXAMPLE_VERSION_INFO={}".format(self.distribution.get_version()),
             "-DCMAKE_BUILD_TYPE={}".format(cfg),  # Not used on MSVC
-            "-DUSER_INCLUDE_PATH=./src/dsgrn/_dsgrn/include"
+            "-DUSER_INCLUDE_PATH=./src/DSGRN/_dsgrn/include"
         ]
 
         build_args = ['--config', cfg]
@@ -85,7 +85,7 @@ with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='dsgrn',
+    name='DSGRN',
     version='1.8.0',
     author='Marcio Gameiro',
     author_email='marciogameiro@gmail.com',
@@ -93,10 +93,10 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     package_dir = {'': 'src'},
-    ext_package='dsgrn',
+    ext_package='DSGRN',
     ext_modules=[CMakeExtension('_dsgrn')],
-    packages=['dsgrn', 'dsgrn.Query'],
-    entry_points={'console_scripts': ['Signatures=dsgrn.Signatures:main [MPI]']},
+    packages=['DSGRN', 'DSGRN.Query'],
+    entry_points={'console_scripts': ['Signatures=DSGRN.Signatures:main [MPI]']},
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
     url = 'https://github.com/marciogameiro/DSGRN',
