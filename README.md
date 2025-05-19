@@ -31,15 +31,13 @@ pip uninstall DSGRN
 
 Assuming you have a C++ compiler and the Python 3 dependencies installed on your system, you can install from source with the command:
 
-	pip install --upgrade --force-reinstall --no-deps --no-cache-dir git+https://github.com/marciogameiro/DSGRN.git
+	pip install --force-reinstall --no-deps --no-cache-dir git+https://github.com/marciogameiro/DSGRN.git
 
 Alternatively, you can clone the GitHub repository and install with:
 
 	git clone https://github.com/marciogameiro/DSGRN.git
 	cd DSGRN
 	./install.sh
-
-If you don't have all the dependencies installed or if the above fails, see [Install.md](Install.md) for some options on how to proceed. Installing DSGRN as above on a Mac usually fails with the C++ compiler and the Python provided by Apple. In that case you need to install new versions as described in the link above.
 
 ## Usage
 
