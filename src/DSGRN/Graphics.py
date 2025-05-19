@@ -3,8 +3,6 @@
 # 2018-03-27
 # MIT LICENSE
 
-import IPython.display
-
 def makehtml(item):
     if type(item) == type([]) or type(item) == type(()):
         return '<div>[' + ','.join([makehtml(i) for i in item]) + ']</div>'
