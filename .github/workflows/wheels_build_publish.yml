@@ -35,13 +35,12 @@ jobs:
           - { os: macos-latest,   cibw_archs: x86_64,   cibw_build: 'cp*'            }
           - { os: macos-latest,   cibw_archs: x86_64,   cibw_build: 'pp*'            }
           - { os: macos-latest,   cibw_archs: arm64,    cibw_build: 'cp*'            }
+          - { os: macos-latest,   cibw_archs: arm64,    cibw_build: 'pp*'            }
           - { os: windows-latest, cibw_archs: AMD64,    cibw_build: 'cp*'            }
           # - { os: windows-latest, cibw_archs: AMD64,    cibw_build: 'pp*'            }
           - { os: windows-latest, cibw_archs: x86,      cibw_build: 'cp*'            }
           # Building wheels not working for Windows ARM64
           # - { os: windows-latest, cibw_archs: ARM64,    cibw_build: 'cp*'            }
-          # PyPy not supported for macOS ARM (need to run on an Apple Silicon machine)
-          # - { os: macos-latest,   cibw_archs: arm64,    cibw_build: 'pp*'            }
 
     steps:
       - name: Set up QEMU
@@ -64,7 +63,8 @@ jobs:
         uses: pypa/cibuildwheel@v2.23.3
         env:
           # Python versions to skip
-          CIBW_SKIP: cp36-* cp37-* cp38-*
+          CIBW_SKIP: cp36* cp37* cp38* pp37* pp38*
+          CIBW_TEST_SKIP: 'pp* *_aarch64 *_i686 *-win32'
           CIBW_ENABLE: pypy
           CIBW_BUILD: ${{ matrix.cibw_build }}
           CIBW_ARCHS: ${{ matrix.cibw_archs }}
@@ -98,19 +98,8 @@ jobs:
       with:
         submodules: true
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
-
-    - name: Install dependencies
-      run: python -m pip install setuptools twine
-
     - name: Build source tarball
-      run: python setup.py sdist
-
-    - name: Check metadata
-      run: twine check dist/*.tar.gz
+      run: pipx run build --sdist
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
