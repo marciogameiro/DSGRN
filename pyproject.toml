@@ -18,7 +18,7 @@ dependencies = [
   "matplotlib>=3.6.0",
   "numpy>=1.23.0",
   "scipy>=1.11.4",
-  "networkx>=3.4",
+  "networkx>=3.2.1",
   "pychomp2>=1.0.4",
 ]
 classifiers = [
@@ -28,7 +28,6 @@ classifiers = [
   "Programming Language :: C++",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
