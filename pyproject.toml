@@ -48,7 +48,7 @@ signatures = [
 
 [project.urls]
 Repository = "https://github.com/marciogameiro/DSGRN"
-    
+
 [project.scripts]
 Signatures = "DSGRN.Signatures:main"
 
