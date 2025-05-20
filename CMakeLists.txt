@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15...3.26)
 
-project(DSGRN)
+project(${SKBUILD_PROJECT_NAME} VERSION ${SKBUILD_PROJECT_VERSION} LANGUAGES CXX)
 
-cmake_policy(SET CMP0054 NEW)
+# cmake_policy(SET CMP0054 NEW)
 
 # Visual Studio C++ does not support keywords such
 # as "and", "not", etc. Settting the /permissive-
@@ -11,17 +11,23 @@ if(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /permissive-")
 endif()
 
-add_subdirectory(pybind11)
+set(PYBIND11_FINDPYTHON ON)
 
-include_directories (
-  ${CMAKE_SOURCE_DIR}/include
-  /usr/local/include
-  ${USER_INCLUDE_PATH} )
+find_package(pybind11 CONFIG REQUIRED)
 
-link_directories (
-  ${USER_LIBRARY_PATH}
-  /usr/local/lib )
+# With the settings above pybind11 finds Python
+# find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
 
-message("USER INCLUDE PATH IS ${USER_INCLUDE_PATH}")
+# USER_PROJECT_PATH is set in pyproject.toml
+include_directories(${CMAKE_SOURCE_DIR}/${USER_PROJECT_PATH}/include)
+# include_directories(${CMAKE_SOURCE_DIR}/src/DSGRN/_dsgrn/include)
 
-pybind11_add_module(_dsgrn src/DSGRN/_dsgrn/DSGRN.cpp)
+pybind11_add_module(_dsgrn MODULE ${USER_PROJECT_PATH}/DSGRN.cpp)
+# pybind11_add_module(_dsgrn MODULE src/DSGRN/_dsgrn/DSGRN.cpp)
+
+message("USER PROJECT PATH IS ${USER_PROJECT_PATH}")
+message("CMAKE SOURCE DIR IS ${CMAKE_SOURCE_DIR}")
+message("CMAKE MODULE PATH IS ${CMAKE_MODULE_PATH}")
+message("SKBUILD PROJECT NAME IS ${SKBUILD_PROJECT_NAME}")
+
+install(TARGETS _dsgrn DESTINATION ${SKBUILD_PROJECT_NAME})
