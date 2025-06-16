@@ -59,7 +59,7 @@ jobs:
           python-version: '3.x'
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.23.3
+        uses: pypa/cibuildwheel@v3.0.0
         env:
           CIBW_TEST_SKIP: 'pp* *_aarch64 *_i686 *-win32'
           CIBW_ENABLE: pypy
