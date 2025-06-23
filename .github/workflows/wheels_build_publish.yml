@@ -63,7 +63,8 @@ jobs:
         uses: pypa/cibuildwheel@v3.0.0
         env:
           # Python versions to skip
-          CIBW_SKIP: cp36* cp37* cp38* pp37* pp38*
+          CIBW_SKIP: cp38*
+          # CIBW_SKIP: cp38* pp37* pp38*
           CIBW_TEST_SKIP: 'pp* *_aarch64 *_i686 *-win32'
           CIBW_ENABLE: pypy
           CIBW_BUILD: ${{ matrix.cibw_build }}
