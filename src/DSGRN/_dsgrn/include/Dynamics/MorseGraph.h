@@ -113,7 +113,7 @@ namespace py = pybind11;
 
 inline void
 MorseGraphBinding (py::module &m) {
-  py::class_<MorseGraph, std::shared_ptr<MorseGraph>>(m, "MorseGraph")
+  py::class_<MorseGraph, std::shared_ptr<MorseGraph>>(m, "MorseGraph", py::module_local())
     .def(py::init<>())
     .def(py::init<Poset const&,std::unordered_map<uint64_t,Annotation>>())
     .def(py::init<TypedObject const&,TypedObject const&>())
