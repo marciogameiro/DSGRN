@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15...3.26)
 
 project(DSGRN)
 
@@ -11,12 +11,14 @@ if(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /permissive-")
 endif()
 
-add_subdirectory(pybind11)
+set(PYBIND11_FINDPYTHON ON)
+
+find_package(pybind11 CONFIG REQUIRED)
 
 include_directories (
   ${CMAKE_SOURCE_DIR}/include
-  /usr/local/include
-  ${USER_INCLUDE_PATH} )
+  ${USER_INCLUDE_PATH}
+  /usr/local/include )
 
 link_directories (
   ${USER_LIBRARY_PATH}
