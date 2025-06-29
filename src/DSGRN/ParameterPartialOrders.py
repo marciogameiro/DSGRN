@@ -2,6 +2,8 @@
 # Marcio Gameiro
 # 2020-10-08
 # MIT LICENSE
+#
+# 2025-06-29
 
 import DSGRN
 import numpy as np
@@ -42,7 +44,9 @@ def factor_graph_inequalities(parameter_graph, par_index, node):
     outputs = parameter_graph.network().outputs(node)
     # Get number of inputs and outputs
     n_inputs = len(inputs)
-    n_outputs = len(outputs)
+    # Treat the no out edge case as one out edge
+    n_outputs = len(outputs) if len(outputs) > 0 else 1
+    # n_outputs = len(outputs)
     # Get factor graph hex code
     hex_code = parameter.logic()[node].hex()
     # Compute partial order corresponding to hex code
@@ -66,13 +70,20 @@ def factor_graph_inequalities(parameter_graph, par_index, node):
 
     # Make string for a partial order term
     def partial_order_term_str(p, source_node):
-        if p < 0: # Return string for threshold
-            # Get original edge index (out edge order)
-            # This is the order before permutation
-            original_edge_index = n_outputs + p
-            return threshold_str(source_node, original_edge_index)
-        # Return string for polynomial
-        return 'p' + str(p)
+        if p >= 0:
+            # Return string for polynomial
+            return 'p' + str(p)
+        # Return string for threshold
+        # Handle the no out edge case
+        if len(outputs) == 0:
+            # Get source node name
+            source_name = parameter_graph.network().name(source_node)
+            thres_str = 'T[' + source_name + '->]'
+            return thres_str
+        # Get original edge index (out edge order)
+        # This is the order before permutation
+        original_edge_index = n_outputs + p
+        return threshold_str(source_node, original_edge_index)
 
     # Get node name
     node_name = parameter_graph.network().name(node)

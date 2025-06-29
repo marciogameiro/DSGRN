@@ -3,7 +3,7 @@
 /// 2015-05-24
 ///
 /// Marcio Gameiro
-/// 2023-09-30
+/// 2025-06-28
 
 #pragma once
 
@@ -485,7 +485,9 @@ partialorders ( std::string const& type ) const {
   std::stringstream result_ss;
   for ( uint64_t d = 0; d < D; ++ d ) {
     uint64_t n = network() . inputs ( d ) . size ();
-    uint64_t m = network() . outputs ( d ) . size ();
+    // Treat the no out edge case as one out edge
+    uint64_t m = network() . outputs ( d ) . size () ? network() . outputs ( d ) . size () : 1;
+    // uint64_t m = network() . outputs ( d ) . size ();
     uint64_t N = ( 1LL << n );
     // Upper bound threshold for p_i
     std::vector<uint64_t> upper_thres (N);
@@ -495,7 +497,7 @@ partialorders ( std::string const& type ) const {
       while ( j < m && data_ -> logic_[d] ( i * m + j ) ) ++ j;
       upper_thres [i] = j; // Threshold such that p_i < T_j
     }
-    // Get partial order as a vector of string
+    // Get partial order as a vector of strings
     std::vector<std::string> partial_order;
     for ( uint64_t j = 0; j <= m; ++ j ) {
       for ( uint64_t i = 0; i < N; ++ i ) {
@@ -506,10 +508,20 @@ partialorders ( std::string const& type ) const {
         }
       }
       if ( j < m ) { // If j == m then p_i > all thresholds
-        // Get original out edge order
-        uint64_t j0 = data_ -> order_[d](j);
-        // Get output threshold in the format "tj = T[x->y]""
-        std::string out_thres = output_threshold ( j0, d );
+        // Output threshold string
+        std::string out_thres;
+        if ( network() . outputs ( d ) . size () == 0 ) {
+          std::string node_name = network() . name ( d );
+          std::stringstream output_ss;
+          output_ss << "t" << j << " = T[" << node_name << "->]";
+          out_thres = output_ss . str ();
+        }
+        else {
+          // Get original out edge order
+          uint64_t j0 = data_ -> order_[d](j);
+          // Get output threshold in the format "tj = T[x->y]""
+          out_thres = output_threshold ( j0, d );
+        }
         // Split string at char '=' to get tj and T[x->y]
         std::stringstream thres_ss (out_thres);
         std::string thres_t_str; // Get tj
