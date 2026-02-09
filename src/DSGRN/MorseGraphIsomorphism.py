@@ -61,8 +61,10 @@ def isomorphic_morse_graphs(mg1, mg2):
     vert_ranks1 = get_vertex_ranks(mg1, num_descendants1)
     vert_ranks2 = get_vertex_ranks(mg2, num_descendants2)
     # Get vertices labels as strings
-    vert_labels1 = {v: mg1.vertex_label(v).split(':')[1].strip() for v in mg1.vertices()}
-    vert_labels2 = {v: mg2.vertex_label(v).split(':')[1].strip() for v in mg2.vertices()}
+    vert_labels1 = {v: mg1.vertex_label(v)[2] for v in mg1.vertices()}
+    vert_labels2 = {v: mg2.vertex_label(v)[2] for v in mg2.vertices()}
+    # vert_labels1 = {v: mg1.vertex_label(v).split(':')[1].strip() for v in mg1.vertices()}
+    # vert_labels2 = {v: mg2.vertex_label(v).split(':')[1].strip() for v in mg2.vertices()}
     # Get vertices in-degrees and out-degrees
     mg1_trans = mg1.transpose()
     mg2_trans = mg2.transpose()
