@@ -2,7 +2,6 @@
 ### MIT LICENSE 2024 Marcio Gameiro
 
 import DSGRN
-import DSGRN_utils
 from collections import defaultdict
 
 def IsomorphismQuery(network, param_indices=None, level=4):
@@ -16,7 +15,7 @@ def IsomorphismQuery(network, param_indices=None, level=4):
     isomorphism_classes = defaultdict(set)
     for par_index in param_indices:
         parameter = parameter_graph.parameter(par_index)
-        morse_graph, stg, graded_complex = DSGRN_utils.ConleyMorseGraph(parameter, level=level)
+        morse_graph, stg, graded_complex = DSGRN.Blowup.ConleyMorseGraph(parameter, level=level)
         found_match = False
         for par_index2 in distinct_morse_graphs:
             morse_graph2 = distinct_morse_graphs[par_index2]

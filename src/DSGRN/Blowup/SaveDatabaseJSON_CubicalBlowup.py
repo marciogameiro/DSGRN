@@ -1,17 +1,8 @@
-############
-
-# Update name and stuff
-
 # SaveDatabaseJSON_CubicalBlowup.py.py
-# Marcio Gameiro
-# MIT LICENSE
-# 2021-03-06
+# MIT LICENSE 2021 Marcio Gameiro
 
 import DSGRN
 from pychomp import *
-import DSGRN_utils
-# from CubicalBlowupGraph import *
-# from Poset_E import *
 import itertools
 import numpy as np
 import json
@@ -289,7 +280,7 @@ def save_morse_graph_database_json(network, database_fname, param_indices=None,
 
     par_index = param_indices[0]
     parameter = parameter_graph.parameter(par_index)
-    morse_graph, stg, graded_complex = DSGRN_utils.ConleyMorseGraph(parameter, level=0)
+    morse_graph, stg, graded_complex = DSGRN.Blowup.ConleyMorseGraph(parameter, level=0)
     # fc_stg = CubicalBlowupGraph(parameter, level=0)  # level = 0 for construction
     fc_stg = stg
     network_json_data = network_json(network)
@@ -301,11 +292,11 @@ def save_morse_graph_database_json(network, database_fname, param_indices=None,
         # Compute DSGRN Plus dynamics
         parameter = parameter_graph.parameter(par_index)
         if fc_stg.dim == 2:
-            morse_graph, stg, graded_complex = DSGRN_utils.ConleyMorseGraph(parameter, level=level)
+            morse_graph, stg, graded_complex = DSGRN.Blowup.ConleyMorseGraph(parameter, level=level)
             fc_stg = stg
             # fc_stg = CubicalBlowupGraph(parameter, level=level)
         else:
-            morse_graph, stg, graded_complex = DSGRN_utils.ConleyMorseGraph(parameter, level=level)
+            morse_graph, stg, graded_complex = DSGRN.Blowup.ConleyMorseGraph(parameter, level=level)
             fc_stg = stg
             # fc_stg = CubicalBlowupGraph(parameter, level=level)
         (dag, fibration) = FlowGradedComplex(fc_stg.complex(), fc_stg.adjacencies())

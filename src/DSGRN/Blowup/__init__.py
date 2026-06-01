@@ -4,14 +4,14 @@
 import DSGRN
 import pychomp
 
-from DSGRN_utils.CubicalBlowupGraph import *
-from DSGRN_utils.MorseGraph import *
-from DSGRN_utils.PlotMorseGraph import *
-from DSGRN_utils.PlotMorseSets import *
-from DSGRN_utils.ComputeMorseGraph import *
-from DSGRN_utils.PlotMorseComponent import *
-from DSGRN_utils.StabilityQuery import *
-from DSGRN_utils.IsomorphismQuery import *
-from DSGRN_utils.WallLabelling import *
-from DSGRN_utils.RampFunction import *
-from DSGRN_utils.SaveDatabaseJSON_CubicalBlowup import *
+from .CubicalBlowupGraph import *
+from .MorseGraph import *
+from .PlotMorseGraph import *
+from .PlotMorseSets import *
+from .ComputeMorseGraph import *
+from .PlotMorseComponent import *
+from .StabilityQuery import *
+from .IsomorphismQuery import *
+from .WallLabelling import *
+from .RampFunction import *
+from .SaveDatabaseJSON_CubicalBlowup import *
